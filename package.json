@@ -4,8 +4,11 @@
   "description": "",
   "main": "src/index.js",
   "type": "module",
+  "imports": {
+    "#controllers/*": "./src/app/controllers/*"
+  },
   "scripts": {
-    "start": "nodemon /src/index.js",
+    "start": "nodemon -r dotenv/config src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint src --cache --fix",
     "prepare": "husky install"
@@ -21,7 +24,9 @@
   },
   "homepage": "https://github.com/Zevik07/dissertation-api#readme",
   "dependencies": {
-    "express": "^4.17.2"
+    "dotenv": "^11.0.0",
+    "express": "^4.17.2",
+    "mongodb": "^4.3.0"
   },
   "devDependencies": {
     "eslint": "^8.6.0",
@@ -29,6 +34,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "husky": "^7.0.4",
     "lint-staged": "^12.1.7",
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.5.1"
   },

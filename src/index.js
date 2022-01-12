@@ -1,13 +1,23 @@
 import express from 'express';
+import morgan from 'morgan';
+import ex from '#controllers/index.js';
+import { connectDB } from './config/db/mongodb.js';
 
 const app = express();
 
-const port = 3000;
+const port = process.env.APP_PORT;
+
+app.use(morgan('combined'));
+
+connectDB();
 
 app.get('/', (req, res) => {
-	res.send('Hello World!');
+	const a = ex();
+	res.send(a);
 });
 
 app.listen(port, () => {
-	console.log(`Example app listening at http://localhost:${port}`);
+	console.log(
+		`Example app listening at http://${process.env.APP_HOST}:${port}`
+	);
 });
