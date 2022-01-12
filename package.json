@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "type": "module",
   "imports": {
-    "#controllers/*": "./src/app/controllers/*"
+    "#controllers/*": "./src/app/controllers/*",
+    "#config/*": "./src/config/*"
   },
   "scripts": {
     "start": "nodemon -r dotenv/config src/index.js",

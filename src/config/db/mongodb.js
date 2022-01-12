@@ -5,10 +5,13 @@ const client = new MongoClient(uri, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 });
+let dbInstance = null;
 
 export const connectDB = async () => {
 	try {
 		await client.connect();
+		// Assign clientDB to our dbInstance
+		dbInstance = client.db(process.env.DB_NAME);
 		console.log('Database connection successful');
 	} catch (err) {
 		console.log('Database connection unsuccessful');
@@ -16,4 +19,9 @@ export const connectDB = async () => {
 	} finally {
 		await client.close();
 	}
+};
+
+export const getDB = () => {
+	if (!dbInstance) throw new Error('You must connect to database first');
+	return dbInstance;
 };
