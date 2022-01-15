@@ -1,11 +1,5 @@
-import joi from 'joi';
+import { getDB } from '#config/mongodb.js';
 
-const name = 'users';
+const UserModel = getDB().collection('users');
 
-const schema = joi.object({
-	username: joi.string().alphanum().min(3).max(30),
-
-	password: joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
-
-	access_token: [joi.string(), joi.number()],
-});
+export default UserModel;

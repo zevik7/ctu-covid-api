@@ -8,8 +8,12 @@
     "#controllers/*": "./src/app/controllers/*",
     "#config/*": "./src/config/*"
   },
+  "_moduleAliases": {
+    "@root"      : ".", 
+    "@models"      : "src/app/models"
+  },
   "scripts": {
-    "start": "nodemon -r dotenv/config src/index.js",
+    "start": "nodemon -r dotenv/config -r module-alias/register src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint src --cache --fix",
     "prepare": "husky install"
@@ -29,6 +33,7 @@
     "express": "^4.17.2",
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",
+    "module-alias": "^2.2.2",
     "mongodb": "^4.3.0"
   },
   "devDependencies": {
