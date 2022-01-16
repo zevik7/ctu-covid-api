@@ -16,12 +16,10 @@ export const connectDB = async () => {
 	} catch (err) {
 		console.log('Database connection unsuccessful');
 		console.log(err);
-	} finally {
-		await client.close();
 	}
 };
 
-export const getDB = () => {
-	if (!dbInstance) throw new Error('You must connect to database first');
+export const getDB = async () => {
+	if (!dbInstance) await connectDB();
 	return dbInstance;
 };

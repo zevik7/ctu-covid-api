@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import path from 'path';
-import { connectDB } from '#config/mongodb.js';
+import { connectDB, getDB } from '#database/mongodb.js';
 
 import route from './routes/v1/index.js';
 
@@ -18,15 +18,15 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// DB
-connectDB();
-
 // Static dir
 app.use(express.static(path.join(path.resolve(), 'src/public')));
 
-// Route init
-route(app);
-
-app.listen(port, () => {
-	console.log(`Example app listening at http://${host}:${port}`);
+// Init app
+connectDB().then(() => {
+	// Route init
+	route(app);
+	// App listen
+	app.listen(port, () => {
+		console.log(`App listening at http://${host}:${port}`);
+	});
 });
