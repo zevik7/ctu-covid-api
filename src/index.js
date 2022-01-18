@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import path from 'path';
-import { connectDB, getDB } from '#database/Mongodb.js';
+import { connectDB, getDB } from '#database/mongodb.js';
 
 import routeV1 from './routes/v1/index.js';
 

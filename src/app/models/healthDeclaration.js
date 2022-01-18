@@ -1,4 +1,4 @@
-import { getDB } from '#database/Mongodb.js';
+import { getDB } from '#database/mongodb.js';
 
 const name = 'health_declarations';
 

@@ -1,5 +1,5 @@
-import UserModel from '#models/User.js';
-import userRequest from '#requests/User.js';
+import UserModel from '#models/user.js';
+import UserRequest from '#requests/user.js';
 
 class UserController {
 	// [GET]
