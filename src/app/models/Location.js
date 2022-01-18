@@ -1,10 +1,10 @@
 import { getDB } from '#database/Mongodb.js';
 
-const name = 'vaccinations';
+const name = 'locations';
 
 export default () => {
 	const dbInstance = getDB();
-	const Vaccination = dbInstance.collection(name);
+	const Location = dbInstance.collection(name);
 
-	return Vaccination;
+	return Location;
 };

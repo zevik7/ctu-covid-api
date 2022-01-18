@@ -5,10 +5,13 @@
   "main": "src/index.js",
   "type": "module",
   "imports": {
+    "#app": "./src/index.js",
     "#controllers/*": "./src/app/controllers/*",
     "#config/*": "./src/config/*",
     "#models/*": "./src/app/models/*",
-    "#database/*": "./src/database/*"
+    "#database/*": "./src/database/*",
+    "#middlewares/*": "./src/app/middlewares/*",
+    "#requests/*": "./src/app/requests/*"
   },
   "scripts": {
     "start": "nodemon -r dotenv/config src/index.js",

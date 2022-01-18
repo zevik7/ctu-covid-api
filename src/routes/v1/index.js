@@ -1,10 +1,11 @@
+import express from 'express';
 import SitesRouter from './sites.js';
 import UserRouter from './user.js';
 
-function route(app) {
-	app.use('/', SitesRouter);
+const router = express.Router();
 
-	app.use('/user', UserRouter);
-}
+router.use('/', SitesRouter);
 
-export default route;
+router.use('/user', UserRouter);
+
+export default router;

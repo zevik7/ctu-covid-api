@@ -1,12 +1,10 @@
-import { getDB } from '#database/mongodb.js';
+import { getDB } from '#database/Mongodb.js';
 
 const name = 'users';
 
-async function create(data) {
-	let { insertedId } = await getDB().collection(name).insertOne(data);
-	return insertedId;
-}
+export default () => {
+	const dbInstance = getDB();
+	const User = dbInstance.collection(name);
 
-export default {
-	create,
+	return User;
 };

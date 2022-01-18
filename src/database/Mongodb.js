@@ -19,7 +19,6 @@ export const connectDB = async () => {
 	}
 };
 
-export const getDB = async () => {
-	if (!dbInstance) await connectDB();
+export const getDB = () => {
 	return dbInstance;
 };

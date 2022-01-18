@@ -1,9 +1,9 @@
 import express from 'express';
 import morgan from 'morgan';
 import path from 'path';
-import { connectDB, getDB } from '#database/mongodb.js';
+import { connectDB, getDB } from '#database/Mongodb.js';
 
-import route from './routes/v1/index.js';
+import routeV1 from './routes/v1/index.js';
 
 const app = express();
 
@@ -24,9 +24,12 @@ app.use(express.static(path.join(path.resolve(), 'src/public')));
 // Init app
 connectDB().then(() => {
 	// Route init
-	route(app);
+	app.use(routeV1);
+
 	// App listen
 	app.listen(port, () => {
 		console.log(`App listening at http://${host}:${port}`);
 	});
 });
+
+export default app;
