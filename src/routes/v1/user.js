@@ -12,4 +12,8 @@ const router = express.Router();
 
 router.get('/', controller.index);
 
+router.get('/:id', controller.show);
+
+router.post('/', controller.store);
+
 export default router;

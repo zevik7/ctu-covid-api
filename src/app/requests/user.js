@@ -3,13 +3,25 @@ import Joi from 'joi';
 const create = (data) => {
 	// create schema object
 	const schema = Joi.object({
-		title: Joi.string().required(),
-		firstName: Joi.string().required(),
-		lastName: Joi.string().required(),
-		email: Joi.string().email().required(),
-		password: Joi.string().min(6).required(),
-		confirmPassword: Joi.string().valid(Joi.ref('password')).required(),
-		role: Joi.string().valid('Admin', 'User').required(),
+		name: Joi.string().required(),
+		birthday: Joi.date().required().messages({
+			'string.base': `"a" should be a type of 'text'`,
+			'string.empty': `"a" cannot be an empty field`,
+			'string.min': `"a" should have a minimum length of {#limit}`,
+			'any.required': `Yeeu cau truong nay`,
+		}),
+		gender: Joi.valid('Nam', 'Nữ').required(),
+		contact: {
+			email: Joi.string().email().required(),
+			phone: Joi.string().required(),
+			address: Joi.string().required(),
+		},
+		username: Joi.string().email(),
+		password: Joi.string().min(6),
+		role: Joi.string().valid('admin', 'user').required(),
+		tot_vaccinations: Joi.number(),
+		tot_heath_declaration: Joi.number(),
+		tot_location: Joi.number(),
 	});
 
 	// schema options
@@ -20,18 +32,9 @@ const create = (data) => {
 	};
 
 	// validate request body against schema
-	const { error, value } = schema.validate(data, options);
-	// const rs = schema.validate(data, options);
+	const validationResult = schema.validate(data, options);
 
-	return error;
-	// if (error) {
-	//     // on fail return comma separated errors
-	//     next(`Validation error: ${error.details.map(x => x.message).join(', ')}`);
-	// } else {
-	//     // on success replace req.body with validated value and trigger next middleware function
-	//     req.body = value;
-	//     next();
-	// }
+	return validationResult;
 };
 
 export default { create };
