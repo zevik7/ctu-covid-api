@@ -1,13 +1,13 @@
-import getUserModel from '#models/user.js';
-import UserRequest from '#requests/user.js';
+import getLocationModel from '#models/location.js';
+import LocationRequest from '#requests/location.js';
 import { ObjectId } from 'mongodb';
 
-class UserController {
+class LocationController {
 	// [GET] /user
 	index(req, res, next) {
 		const pageNum = req.query.page;
 
-		getUserModel()
+		getLocationModel()
 			.find({
 				deleted: false,
 			})
@@ -22,18 +22,11 @@ class UserController {
 					data: rs,
 				});
 			});
-		// getUserModel()
-		// .deleteMany({})
-		// .then((rs) => {
-		// 	res.json({
-		// 		status: 'done'
-		// 	})
-		// })
 	}
 
 	// [GET] /user/:id
 	show(req, res, next) {
-		getUserModel()
+		getLocationModel()
 			.findOne({
 				_id: ObjectId(req.params.id),
 			})
@@ -49,7 +42,7 @@ class UserController {
 	// [POST] /user
 	store(req, res, next) {
 		// Validation
-		const validation = UserRequest.create(req.body);
+		const validation = LocationRequest.create(req.body);
 
 		if (validation.error)
 			return res.json({
@@ -57,7 +50,7 @@ class UserController {
 				errors: validation.error.details,
 			});
 
-		getUserModel()
+		getLocationModel()
 			.insertOne({
 				...validation.value,
 				create_at: Date.now,
@@ -75,7 +68,7 @@ class UserController {
 	//[PUT] /user/:id
 	update(req, res, next) {
 		// Validation
-		const validation = UserRequest.update(req.body);
+		const validation = LocationRequest.update(req.body);
 
 		if (validation.error)
 			return res.json({
@@ -83,7 +76,7 @@ class UserController {
 				errors: validation.error.details,
 			});
 
-		getUserModel()
+		getLocationModel()
 			.updateOne(
 				{
 					_id: ObjectId(req.params.id),
@@ -104,7 +97,7 @@ class UserController {
 
 	// [DELETE] /user/:id
 	destroy(req, res, next) {
-		getUserModel()
+		getLocationModel()
 			.deleteOne({ _id: req.params.id })
 			.then((rs) => {
 				res.json({
@@ -115,4 +108,4 @@ class UserController {
 	}
 }
 
-export default new UserController();
+export default new LocationController();
