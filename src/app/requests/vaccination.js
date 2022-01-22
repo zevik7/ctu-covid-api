@@ -4,7 +4,7 @@ const create = (data) => {
 	// create schema object
 	const schema = Joi.object({
 		user_id: Joi.string().required(),
-		vaccine_type: Joi.string().required(),
+		vaccine_type_id: Joi.string.required(),
 		injection_date: Joi.date().required(),
 		images: [
 			{

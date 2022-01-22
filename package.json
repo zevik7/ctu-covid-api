@@ -11,13 +11,16 @@
     "#models/*": "./src/app/models/*",
     "#database/*": "./src/database/*",
     "#middlewares/*": "./src/app/middlewares/*",
-    "#requests/*": "./src/app/requests/*"
+    "#requests/*": "./src/app/requests/*",
+    "#utilities/*": "./src/utilities/*"
   },
   "scripts": {
     "start": "nodemon -r dotenv/config src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint src --cache --fix",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "db-seed": "node -r dotenv/config ./src/database/seeders/index.js",
+    "db-migrate": "node -r dotenv/config ./src/database/migrations/index.js"
   },
   "repository": {
     "type": "git",
@@ -30,8 +33,10 @@
   },
   "homepage": "https://github.com/Zevik07/dissertation-api#readme",
   "dependencies": {
+    "@faker-js/faker": "^6.0.0-alpha.3",
     "dotenv": "^11.0.0",
     "express": "^4.17.2",
+    "faker": "^6.6.6",
     "joi": "^17.5.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.3.0"

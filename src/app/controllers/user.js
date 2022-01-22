@@ -22,13 +22,6 @@ class UserController {
 					data: rs,
 				});
 			});
-		// getUserModel()
-		// .deleteMany({})
-		// .then((rs) => {
-		// 	res.json({
-		// 		status: 'done'
-		// 	})
-		// })
 	}
 
 	// [GET] /user/:id
