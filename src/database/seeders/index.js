@@ -8,6 +8,8 @@ connectDB().then(seedDB);
 
 async function seedDB() {
 	await userSeeder(100);
+
 	await vaccine_typeSeeder();
+
 	await vaccinationSeeder(200);
 }

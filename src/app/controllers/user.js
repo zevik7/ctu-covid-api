@@ -8,9 +8,7 @@ class UserController {
 		const pageNum = req.query.page;
 
 		getUserModel()
-			.find({
-				deleted: false,
-			})
+			.find()
 			.sort()
 			.limit(5)
 			.skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
@@ -30,11 +28,9 @@ class UserController {
 			.findOne({
 				_id: ObjectId(req.params.id),
 			})
-			.then((rs) => {
-				res.status(200);
-				res.json({
-					status: 'success',
-					data: rs,
+			.then((result) => {
+				res.success({
+					result,
 				});
 			});
 	}

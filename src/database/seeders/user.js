@@ -1,6 +1,7 @@
 import faker from '@faker-js/faker';
 import getUserModel from '#models/user.js';
 import removeVieTones from '#utilities/removeVieTones.js';
+import bcrypt from 'bcryptjs';
 
 export default async () => {
 	faker.locale = 'vi';
@@ -12,7 +13,22 @@ export default async () => {
 			console.log('Remove all previous users successful');
 		});
 
-	let users = [];
+	let users = [
+		{
+			name: 'Nguyen Huu Thien Phu',
+			birthday: '03-15-2000',
+			gender: 'Nam',
+			contact: {
+				email: 'phub1805805@gmail.com',
+				phone: '0898008388',
+				address: 'Hau Giang',
+			},
+			username: 'admin',
+			password: bcrypt.hashSync('admin'),
+			avatar: '/images/default_avatar.jpeg',
+			role: 'admin',
+		},
+	];
 
 	for (let i = 0; i < 100; i++) {
 		const name = faker.name.findName(); // full name
@@ -32,6 +48,8 @@ export default async () => {
 				address,
 			},
 			role: 'user',
+			created_at: Date.now(),
+			updated_at: Date.now(),
 		});
 	}
 

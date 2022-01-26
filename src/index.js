@@ -24,7 +24,7 @@ app.use(express.static(path.join(path.resolve(), 'src/public')));
 // Init app
 connectDB().then(() => {
 	// Route init
-	app.use(routeV1);
+	app.use('/api/v1', routeV1);
 
 	// App listen
 	app.listen(port, () => {

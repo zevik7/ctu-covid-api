@@ -21,8 +21,8 @@ export default async (qty) => {
 	const vaccinations = [];
 
 	for (let i = 0; i < qty; i++) {
-		const user_id = faker.random.arrayElement(userIds);
-		const vaccine_type_id = faker.random.arrayElements(vaccineTypeIds);
+		const user_id = faker.random.arrayElement(userIds)._id;
+		const vaccine_type_id = faker.random.arrayElement(vaccineTypeIds)._id;
 		const injection_date = faker.date.between('11-1-2021', '5-1-2022');
 		const images = [
 			{
