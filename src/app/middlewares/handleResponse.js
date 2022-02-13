@@ -3,7 +3,7 @@ export default (req, res, next) => {
 	 * Success response
 	 */
 	res.success = ({
-		result = {},
+		data = {},
 		code = 200,
 		status = 'success',
 		message = '',
@@ -11,7 +11,7 @@ export default (req, res, next) => {
 		return res.status(code).json({
 			status,
 			message,
-			result,
+			data,
 		});
 	};
 

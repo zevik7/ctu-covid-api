@@ -39,7 +39,7 @@ class LoginController {
 			delete user.password;
 
 			res.success({
-				result: { ...user, token },
+				data: { ...user, token },
 			});
 		} catch (err) {
 			return res.error({

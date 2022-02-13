@@ -13,11 +13,9 @@ class UserController {
 			.limit(5)
 			.skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
 			.toArray()
-			.then((rs) => {
-				res.status(200);
-				res.json({
-					status: 'success',
-					data: rs,
+			.then((result) => {
+				res.success({
+					data: result,
 				});
 			});
 	}

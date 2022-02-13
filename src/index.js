@@ -1,15 +1,25 @@
 import express from 'express';
 import morgan from 'morgan';
 import path from 'path';
+import cors from 'cors';
 import { connectDB } from '#database/mongodb.js';
 
 import routeV1 from './routes/v1/index.js';
 
 const app = express();
 
-const port = process.env.APP_PORT || 3000;
+const port = process.env.APP_PORT || 8080;
 
 const host = process.env.APP_HOST || 'localhost';
+
+// Use cors
+const corsOptions = {
+	origin: '*',
+	credentials: true, //access-control-allow-credentials:true
+	optionSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions)); // Use this after the variable declaration
 
 // Console log requests
 app.use(morgan('combined'));
