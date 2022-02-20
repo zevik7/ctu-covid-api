@@ -1,6 +1,6 @@
 import faker from '@faker-js/faker';
-import getVaccinationModel from '#models/vaccination.js';
-import getVaccineTypeModel from '#models/vaccine_type.js';
+import getVaccinationModel from '#models/Vaccination.js';
+import getVaccineTypeModel from '#models/Vaccine_type.js';
 import getUserModel from '#models/user.js';
 
 export default async (qty) => {

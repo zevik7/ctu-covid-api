@@ -1,5 +1,5 @@
-import getLocationModel from '#models/location.js';
-import LocationRequest from '#requests/location.js';
+import getLocationModel from '#models/Location.js';
+import LocationRequest from '#requests/Location.js';
 import { ObjectId } from 'mongodb';
 
 class LocationController {

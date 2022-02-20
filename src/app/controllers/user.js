@@ -1,5 +1,5 @@
-import getUserModel from '#models/user.js';
-import UserRequest from '#requests/user.js';
+import getUserModel from '#models/User.js';
+import UserRequest from '#requests/User.js';
 import { ObjectId } from 'mongodb';
 
 class UserController {

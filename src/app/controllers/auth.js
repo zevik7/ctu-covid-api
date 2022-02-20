@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
-import getUserModel from '#models/user.js';
+import getUserModel from '#models/User.js';
 import auth from '#config/auth.config.js ';
 
 class LoginController {

@@ -1,5 +1,5 @@
-import getHealthDeclarationModel from '#models/healthDeclaration.js';
-import HealthDeclarationRequest from '#requests/healthDeclaration.js';
+import getHealthDeclarationModel from '#models/Health_declaration.js';
+import HealthDeclarationRequest from '#requests/Health_declaration.js';
 import { ObjectId } from 'mongodb';
 
 class HealthDeclarationController {

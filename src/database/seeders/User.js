@@ -1,5 +1,5 @@
 import faker from '@faker-js/faker';
-import getUserModel from '#models/user.js';
+import getUserModel from '#models/User.js';
 import removeVieTones from '#utilities/removeVieTones.js';
 import bcrypt from 'bcryptjs';
 

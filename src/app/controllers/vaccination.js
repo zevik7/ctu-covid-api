@@ -1,5 +1,5 @@
-import getVaccinaModel from '#models/vaccination.js';
-import VaccinaRequest from '#requests/vaccination.js';
+import getVaccinaModel from '#models/Vaccination.js';
+import VaccinaRequest from '#requests/Vaccination.js';
 import { ObjectId } from 'mongodb';
 
 class VaccinationController {

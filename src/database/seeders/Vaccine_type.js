@@ -1,5 +1,5 @@
 import faker from '@faker-js/faker';
-import getVaccineTypeModel from '#models/vaccine_type.js';
+import getVaccineTypeModel from '#models/Vaccine_type.js';
 
 export default async () => {
 	// Remove all previous data
