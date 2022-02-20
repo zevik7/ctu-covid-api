@@ -1,13 +1,13 @@
-import getHealthDeclarationModel from '#models/Health_declaration.js';
-import HealthDeclarationRequest from '#requests/Health_declaration.js';
+import getVaccine_typeModel from '#models/Vaccine_type.js';
+import Vaccine_typeRequest from '#requests/Vaccine_type.js';
 import { ObjectId } from 'mongodb';
 
-class HealthDeclarationController {
+class VaccinationController {
 	// [GET] /user
 	index(req, res, next) {
 		const pageNum = req.query.page;
 
-		getHealthDeclarationModel()
+		getVaccine_typeModel()
 			.find({
 				deleted: false,
 			})
@@ -26,7 +26,7 @@ class HealthDeclarationController {
 
 	// [GET] /user/:id
 	show(req, res, next) {
-		getHealthDeclarationModel()
+		getVaccine_typeModel()
 			.findOne({
 				_id: ObjectId(req.params.id),
 			})
@@ -42,7 +42,7 @@ class HealthDeclarationController {
 	// [POST] /user
 	store(req, res, next) {
 		// Validation
-		const validation = HealthDeclarationRequest.create(req.body);
+		const validation = Vaccine_typeRequest.create(req.body);
 
 		if (validation.error)
 			return res.json({
@@ -50,11 +50,11 @@ class HealthDeclarationController {
 				errors: validation.error.details,
 			});
 
-		getHealthDeclarationModel()
+		getVaccine_typeModel()
 			.insertOne({
 				...validation.value,
-				create_at: Date.now,
-				update_at: Date.now,
+				created_at: Date.now,
+				updated_at: Date.now,
 				deleted: false,
 			})
 			.then((rs) => {
@@ -68,7 +68,7 @@ class HealthDeclarationController {
 	//[PUT] /user/:id
 	update(req, res, next) {
 		// Validation
-		const validation = HealthDeclarationRequest.update(req.body);
+		const validation = Vaccine_typeRequest.update(req.body);
 
 		if (validation.error)
 			return res.json({
@@ -76,14 +76,14 @@ class HealthDeclarationController {
 				errors: validation.error.details,
 			});
 
-		getHealthDeclarationModel()
+		getVaccine_typeModel()
 			.updateOne(
 				{
 					_id: ObjectId(req.params.id),
 				},
 				{
 					$set: validation.value,
-					$currentDate: { update_at: true },
+					$currentDate: { updated_at: true },
 				}
 			)
 			.then((rs) => {
@@ -97,7 +97,7 @@ class HealthDeclarationController {
 
 	// [DELETE] /user/:id
 	destroy(req, res, next) {
-		getHealthDeclarationModel()
+		getVaccine_typeModel()
 			.deleteOne({ _id: req.params.id })
 			.then((rs) => {
 				res.json({
@@ -108,4 +108,4 @@ class HealthDeclarationController {
 	}
 }
 
-export default new HealthDeclarationController();
+export default new VaccinationController();

@@ -1,13 +1,13 @@
-import getLocationModel from '#models/Location.js';
-import LocationRequest from '#requests/Location.js';
+import getHealthDeclarationModel from '#models/Health_declaration.js';
+import HealthDeclarationRequest from '#requests/Health_declaration.js';
 import { ObjectId } from 'mongodb';
 
-class LocationController {
+class HealthDeclarationController {
 	// [GET] /user
 	index(req, res, next) {
 		const pageNum = req.query.page;
 
-		getLocationModel()
+		getHealthDeclarationModel()
 			.find({
 				deleted: false,
 			})
@@ -26,7 +26,7 @@ class LocationController {
 
 	// [GET] /user/:id
 	show(req, res, next) {
-		getLocationModel()
+		getHealthDeclarationModel()
 			.findOne({
 				_id: ObjectId(req.params.id),
 			})
@@ -42,7 +42,7 @@ class LocationController {
 	// [POST] /user
 	store(req, res, next) {
 		// Validation
-		const validation = LocationRequest.create(req.body);
+		const validation = HealthDeclarationRequest.create(req.body);
 
 		if (validation.error)
 			return res.json({
@@ -50,7 +50,7 @@ class LocationController {
 				errors: validation.error.details,
 			});
 
-		getLocationModel()
+		getHealthDeclarationModel()
 			.insertOne({
 				...validation.value,
 				created_at: Date.now,
@@ -68,7 +68,7 @@ class LocationController {
 	//[PUT] /user/:id
 	update(req, res, next) {
 		// Validation
-		const validation = LocationRequest.update(req.body);
+		const validation = HealthDeclarationRequest.update(req.body);
 
 		if (validation.error)
 			return res.json({
@@ -76,7 +76,7 @@ class LocationController {
 				errors: validation.error.details,
 			});
 
-		getLocationModel()
+		getHealthDeclarationModel()
 			.updateOne(
 				{
 					_id: ObjectId(req.params.id),
@@ -97,7 +97,7 @@ class LocationController {
 
 	// [DELETE] /user/:id
 	destroy(req, res, next) {
-		getLocationModel()
+		getHealthDeclarationModel()
 			.deleteOne({ _id: req.params.id })
 			.then((rs) => {
 				res.json({
@@ -108,4 +108,4 @@ class LocationController {
 	}
 }
 
-export default new LocationController();
+export default new HealthDeclarationController();

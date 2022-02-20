@@ -3,10 +3,9 @@ import Joi from 'joi';
 const create = (data) => {
 	// create schema object
 	const schema = Joi.object({
-		qr: Joi.string().required(),
+		qr_code: Joi.string().required(),
 		address: Joi.string().required(),
-		create_by: Joi.string().required(),
-		total_declaration: Joi.number(),
+		created_by: Joi.string().required(),
 	});
 
 	// schema options

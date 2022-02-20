@@ -47,8 +47,8 @@ class UserController {
 		getUserModel()
 			.insertOne({
 				...validation.value,
-				create_at: Date.now,
-				update_at: Date.now,
+				created_at: Date.now,
+				updated_at: Date.now,
 				deleted: false,
 			})
 			.then((rs) => {
@@ -77,7 +77,7 @@ class UserController {
 				},
 				{
 					$set: validation.value,
-					$currentDate: { update_at: true },
+					$currentDate: { updated_at: true },
 				}
 			)
 			.then((rs) => {

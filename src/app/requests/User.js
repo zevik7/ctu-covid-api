@@ -22,9 +22,6 @@ const create = (data) => {
 		password: Joi.string().min(6),
 		avatar: Joi.string(),
 		role: Joi.string().valid('admin', 'user').required(),
-		tot_vaccinations: Joi.number(),
-		tot_heath_declaration: Joi.number(),
-		tot_location: Joi.number(),
 	});
 
 	// validate request body against schema
