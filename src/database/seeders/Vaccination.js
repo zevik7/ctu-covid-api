@@ -1,7 +1,7 @@
 import faker from '@faker-js/faker';
 import getVaccinationModel from '#models/Vaccination.js';
 import getVaccineTypeModel from '#models/Vaccine_type.js';
-import getUserModel from '#models/user.js';
+import getUserModel from '#models/User.js';
 
 export default async (qty) => {
 	// Remove all previous data
@@ -36,6 +36,8 @@ export default async (qty) => {
 			vaccine_type_id,
 			injection_date,
 			images,
+			created_at: new Date(),
+			updated_at: new Date(),
 		});
 	}
 

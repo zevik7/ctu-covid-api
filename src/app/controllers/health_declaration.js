@@ -54,7 +54,6 @@ class HealthDeclarationController {
 			.insertOne({
 				...validation.value,
 				created_at: Date.now,
-				updated_at: Date.now,
 				deleted: false,
 			})
 			.then((rs) => {

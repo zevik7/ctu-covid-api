@@ -1,7 +1,9 @@
 import { connectDB } from '#database/mongodb.js';
-import userSeeder from './user.js';
-import vaccinationSeeder from './vaccination.js';
-import vaccine_typeSeeder from './vaccine_type.js';
+import userSeeder from './User.js';
+import vaccinationSeeder from './Vaccination.js';
+import vaccine_typeSeeder from './Vaccine_type.js';
+import locationSeeder from './Location.js';
+import health_declarationSeeder from './Health_declaration.js';
 
 // Init app
 connectDB().then(seedDB);
@@ -12,4 +14,12 @@ async function seedDB() {
 	await vaccine_typeSeeder();
 
 	await vaccinationSeeder(200);
+
+	await locationSeeder(200);
+
+	await health_declarationSeeder(200);
+
+	console.log('Done');
+
+	return;
 }

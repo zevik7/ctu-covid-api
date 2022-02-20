@@ -9,36 +9,52 @@ export default async () => {
 			console.log('Remove all previous vaccine types successful');
 		});
 
-	const vaccineTypes = [
+	let vaccineTypes = [
 		{
 			name: 'Pfizer',
+			description: '',
 			country: 'United States',
 		},
 		{
 			name: 'AstraZeneca',
+			description: '',
 			country: 'England',
 		},
 		{
 			name: 'Moderna',
+			description: '',
 			country: 'United States',
 		},
 		{
 			name: 'Sputnik V',
+			description: '',
 			country: 'Russian',
 		},
 		{
 			name: 'Sinopharm',
+			description: '',
 			country: 'China',
 		},
 		{
 			name: 'Janssen',
+			description: '',
 			country: 'Netherlands',
 		},
 		{
 			name: 'Covaxin',
+			description: '',
 			country: 'Vietnam',
 		},
 	];
+
+	// Assign timestamp
+	vaccineTypes = vaccineTypes.map((element, index) => {
+		return {
+			...element,
+			created_at: new Date(),
+			updated_at: new Date(),
+		};
+	});
 
 	await getVaccineTypeModel()
 		.insertMany(vaccineTypes)
