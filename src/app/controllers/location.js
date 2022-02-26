@@ -1,109 +1,111 @@
-import getLocationModel from '#models/Location.js';
-import LocationRequest from '#requests/Location.js';
-import { ObjectId } from 'mongodb';
+import getLocationModel from '#models/Location.js'
+import LocationRequest from '#requests/Location.js'
+import { ObjectId } from 'mongodb'
 
 class LocationController {
-	// [GET] /user
-	index(req, res, next) {
-		const pageNum = req.query.page;
+  // [GET] /user
+  async index(req, res, next) {
+    const currentPage = req.query.page || 1
+    const perPage = 20
+    const skip = (currentPage - 1) * perPage
+    const totalPage = await getLocationModel().countDocuments({})
 
-		getLocationModel()
-			.find({})
-			.sort()
-			.limit(5)
-			.skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
-			.toArray()
-			.then((rs) => {
-				res.status(200);
-				res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    const data = await getLocationModel()
+      .find()
+      .sort()
+      .skip(skip)
+      .limit(perPage)
+      .toArray()
 
-	// [GET] /user/:id
-	show(req, res, next) {
-		getLocationModel()
-			.findOne({
-				_id: ObjectId(req.params.id),
-			})
-			.then((rs) => {
-				res.status(200);
-				res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    res.success({
+      currentPage,
+      totalPage,
+      data,
+    })
+  }
 
-	// [POST] /user
-	store(req, res, next) {
-		// Validation
-		const validation = LocationRequest.create(req.body);
+  // [GET] /user/:id
+  show(req, res, next) {
+    getLocationModel()
+      .findOne({
+        _id: ObjectId(req.params.id),
+      })
+      .then((rs) => {
+        res.status(200)
+        res.json({
+          status: 'success',
+          data: rs,
+        })
+      })
+  }
 
-		if (validation.error)
-			return res.json({
-				status: 'error',
-				errors: validation.error.details,
-			});
+  // [POST] /user
+  store(req, res, next) {
+    // Validation
+    const validation = LocationRequest.create(req.body)
 
-		getLocationModel()
-			.insertOne({
-				...validation.value,
-				created_at: Date.now,
-				updated_at: Date.now,
-				deleted: false,
-			})
-			.then((rs) => {
-				return res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    if (validation.error)
+      return res.json({
+        status: 'error',
+        errors: validation.error.details,
+      })
 
-	//[PUT] /user/:id
-	update(req, res, next) {
-		// Validation
-		const validation = LocationRequest.update(req.body);
+    getLocationModel()
+      .insertOne({
+        ...validation.value,
+        created_at: Date.now,
+        updated_at: Date.now,
+        deleted: false,
+      })
+      .then((rs) => {
+        return res.json({
+          status: 'success',
+          data: rs,
+        })
+      })
+  }
 
-		if (validation.error)
-			return res.json({
-				status: 'error',
-				errors: validation.error.details,
-			});
+  //[PUT] /user/:id
+  update(req, res, next) {
+    // Validation
+    const validation = LocationRequest.update(req.body)
 
-		getLocationModel()
-			.updateOne(
-				{
-					_id: ObjectId(req.params.id),
-				},
-				{
-					$set: validation.value,
-					$currentDate: { updated_at: true },
-				}
-			)
-			.then((rs) => {
-				res.status(200);
-				res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    if (validation.error)
+      return res.json({
+        status: 'error',
+        errors: validation.error.details,
+      })
 
-	// [DELETE] /user/:id
-	destroy(req, res, next) {
-		getLocationModel()
-			.deleteOne({ _id: req.params.id })
-			.then((rs) => {
-				res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    getLocationModel()
+      .updateOne(
+        {
+          _id: ObjectId(req.params.id),
+        },
+        {
+          $set: validation.value,
+          $currentDate: { updated_at: true },
+        }
+      )
+      .then((rs) => {
+        res.status(200)
+        res.json({
+          status: 'success',
+          data: rs,
+        })
+      })
+  }
+
+  // [DELETE] /user/:id
+  destroy(req, res, next) {
+    getLocationModel()
+      .deleteOne({ _id: req.params.id })
+      .then((rs) => {
+        res.json({
+          status: 'success',
+          data: rs,
+        })
+      })
+  }
 }
 
-export default new LocationController();
+export default new LocationController()

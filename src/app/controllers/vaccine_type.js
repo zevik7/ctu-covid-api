@@ -1,111 +1,111 @@
-import getVaccine_typeModel from '#models/Vaccine_type.js';
-import Vaccine_typeRequest from '#requests/Vaccine_type.js';
-import { ObjectId } from 'mongodb';
+import getVaccine_typeModel from '#models/Vaccine_type.js'
+import Vaccine_typeRequest from '#requests/Vaccine_type.js'
+import { ObjectId } from 'mongodb'
 
 class VaccinationController {
-	// [GET] /user
-	index(req, res, next) {
-		const pageNum = req.query.page;
+  // [GET] /user
+  async index(req, res, next) {
+    const currentPage = req.query.page || 1
+    const perPage = 20
+    const skip = (currentPage - 1) * perPage
+    const totalPage = await getVaccine_typeModel().countDocuments({})
 
-		getVaccine_typeModel()
-			.find({
-				deleted: false,
-			})
-			.sort()
-			.limit(5)
-			.skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
-			.toArray()
-			.then((rs) => {
-				res.status(200);
-				res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    const data = await getVaccine_typeModel()
+      .find()
+      .sort()
+      .skip(skip)
+      .limit(perPage)
+      .toArray()
 
-	// [GET] /user/:id
-	show(req, res, next) {
-		getVaccine_typeModel()
-			.findOne({
-				_id: ObjectId(req.params.id),
-			})
-			.then((rs) => {
-				res.status(200);
-				res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    res.success({
+      currentPage,
+      totalPage,
+      data,
+    })
+  }
 
-	// [POST] /user
-	store(req, res, next) {
-		// Validation
-		const validation = Vaccine_typeRequest.create(req.body);
+  // [GET] /user/:id
+  show(req, res, next) {
+    getVaccine_typeModel()
+      .findOne({
+        _id: ObjectId(req.params.id),
+      })
+      .then((rs) => {
+        res.status(200)
+        res.json({
+          status: 'success',
+          data: rs,
+        })
+      })
+  }
 
-		if (validation.error)
-			return res.json({
-				status: 'error',
-				errors: validation.error.details,
-			});
+  // [POST] /user
+  store(req, res, next) {
+    // Validation
+    const validation = Vaccine_typeRequest.create(req.body)
 
-		getVaccine_typeModel()
-			.insertOne({
-				...validation.value,
-				created_at: Date.now,
-				updated_at: Date.now,
-				deleted: false,
-			})
-			.then((rs) => {
-				return res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    if (validation.error)
+      return res.json({
+        status: 'error',
+        errors: validation.error.details,
+      })
 
-	//[PUT] /user/:id
-	update(req, res, next) {
-		// Validation
-		const validation = Vaccine_typeRequest.update(req.body);
+    getVaccine_typeModel()
+      .insertOne({
+        ...validation.value,
+        created_at: Date.now,
+        updated_at: Date.now,
+        deleted: false,
+      })
+      .then((rs) => {
+        return res.json({
+          status: 'success',
+          data: rs,
+        })
+      })
+  }
 
-		if (validation.error)
-			return res.json({
-				status: 'error',
-				errors: validation.error.details,
-			});
+  //[PUT] /user/:id
+  update(req, res, next) {
+    // Validation
+    const validation = Vaccine_typeRequest.update(req.body)
 
-		getVaccine_typeModel()
-			.updateOne(
-				{
-					_id: ObjectId(req.params.id),
-				},
-				{
-					$set: validation.value,
-					$currentDate: { updated_at: true },
-				}
-			)
-			.then((rs) => {
-				res.status(200);
-				res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    if (validation.error)
+      return res.json({
+        status: 'error',
+        errors: validation.error.details,
+      })
 
-	// [DELETE] /user/:id
-	destroy(req, res, next) {
-		getVaccine_typeModel()
-			.deleteOne({ _id: req.params.id })
-			.then((rs) => {
-				res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    getVaccine_typeModel()
+      .updateOne(
+        {
+          _id: ObjectId(req.params.id),
+        },
+        {
+          $set: validation.value,
+          $currentDate: { updated_at: true },
+        }
+      )
+      .then((rs) => {
+        res.status(200)
+        res.json({
+          status: 'success',
+          data: rs,
+        })
+      })
+  }
+
+  // [DELETE] /user/:id
+  destroy(req, res, next) {
+    getVaccine_typeModel()
+      .deleteOne({ _id: req.params.id })
+      .then((rs) => {
+        res.json({
+          status: 'success',
+          data: rs,
+        })
+      })
+  }
 }
 
-export default new VaccinationController();
+export default new VaccinationController()

@@ -1,10 +1,10 @@
-import { getDB } from '#database/mongodb.js';
+import { getDB } from '#database/mongodb.js'
 
-const name = 'health_declarations';
+const name = 'health_declarations'
 
 export default () => {
-	const dbInstance = getDB();
-	const HealthDeclaration = dbInstance.collection(name);
+  const dbInstance = getDB()
+  const HealthDeclaration = dbInstance.collection(name)
 
-	return HealthDeclaration;
-};
+  return HealthDeclaration
+}

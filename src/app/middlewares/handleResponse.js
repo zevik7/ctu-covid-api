@@ -1,67 +1,58 @@
 export default (req, res, next) => {
-	/**
-	 * Success response
-	 */
-	res.success = ({
-		data = {},
-		code = 200,
-		status = 'success',
-		message = '',
-	}) => {
-		return res.status(code).json({
-			status,
-			message,
-			data,
-		});
-	};
+  /**
+   * Success response
+   */
+  res.success = (data) => {
+    return res.status(200).json(data)
+  }
 
-	/**
-	 * Custom error response
-	 */
+  /**
+   * Custom error response
+   */
 
-	res.error = ({ errors = {}, code = 400, status = 'error', message = '' }) => {
-		return res.status(code).json({
-			status,
-			message,
-			errors,
-		});
-	};
+  res.error = ({ errors = {}, code = 400, status = 'error', message = '' }) => {
+    return res.status(code).json({
+      status,
+      message,
+      errors,
+    })
+  }
 
-	/**
-	 * Bad request response
-	 * (status 400)
-	 * The server could not understand the request due to invalid syntax.
-	 */
+  /**
+   * Bad request response
+   * (status 400)
+   * The server could not understand the request due to invalid syntax.
+   */
 
-	res.badreq = ({ errors = {}, code = 400, message = 'Bad request' }) => {
-		return res.error({ errors, code, message });
-	};
+  res.badreq = ({ errors = {}, code = 400, message = 'Bad request' }) => {
+    return res.error({ errors, code, message })
+  }
 
-	/**
-	 * Unauthorize request response
-	 * (status 401)
-	 */
+  /**
+   * Unauthorize request response
+   * (status 401)
+   */
 
-	res.unauth = ({ errors = {}, code = 401, message = 'Unauthorize' }) => {
-		return res.error({ errors, code, message });
-	};
+  res.unauth = ({ errors = {}, code = 401, message = 'Unauthorize' }) => {
+    return res.error({ errors, code, message })
+  }
 
-	/**
-	 * Forbidden request response
-	 * (status 403)
-	 * The client does not have access rights to the content; that is, it is unauthorized, so the server is refusing to give the requested resource. Unlike 401 Unauthorized, the client's identity is known to the server.
-	 */
+  /**
+   * Forbidden request response
+   * (status 403)
+   * The client does not have access rights to the content; that is, it is unauthorized, so the server is refusing to give the requested resource. Unlike 401 Unauthorized, the client's identity is known to the server.
+   */
 
-	res.forbidden = ({ errors = {}, code = 403, message = 'Forbidden' }) =>
-		res.error({ errors, code, message });
+  res.forbidden = ({ errors = {}, code = 403, message = 'Forbidden' }) =>
+    res.error({ errors, code, message })
 
-	/**
-	 * (status 500)
-	 * Internal request response
-	 */
+  /**
+   * (status 500)
+   * Internal request response
+   */
 
-	res.internal = ({ errors = {}, code = 401, message = '' }) =>
-		res.error({ errors, code, message });
+  res.internal = ({ errors = {}, code = 401, message = '' }) =>
+    res.error({ errors, code, message })
 
-	next();
-};
+  next()
+}

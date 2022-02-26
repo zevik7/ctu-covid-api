@@ -19,6 +19,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint src --cache --fix",
     "prepare": "husky install",
+    "prettier": "prettier --write ./src",
     "db-seed": "node -r dotenv/config ./src/database/seeders/index.js",
     "db-migrate": "node -r dotenv/config ./src/database/migrations/index.js"
   },

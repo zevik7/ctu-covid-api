@@ -1,10 +1,10 @@
-import { getDB } from '#database/mongodb.js';
+import { getDB } from '#database/mongodb.js'
 
-const name = 'users';
+const name = 'users'
 
 export default () => {
-	const dbInstance = getDB();
-	const User = dbInstance.collection(name);
+  const dbInstance = getDB()
+  const User = dbInstance.collection(name)
 
-	return User;
-};
+  return User
+}

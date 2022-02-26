@@ -1,105 +1,109 @@
-import getUserModel from '#models/User.js';
-import UserRequest from '#requests/User.js';
-import { ObjectId } from 'mongodb';
+import getUserModel from '#models/User.js'
+import UserRequest from '#requests/User.js'
+import { ObjectId } from 'mongodb'
 
 class UserController {
-	// [GET] /user
-	index(req, res, next) {
-		const pageNum = req.query.page;
+  // [GET] /user
+  async index(req, res, next) {
+    const currentPage = req.query.page || 1
+    const perPage = 20
+    const skip = (currentPage - 1) * perPage
+    const totalPage = await getUserModel().countDocuments({})
 
-		getUserModel()
-			.find()
-			.sort()
-			.limit(5)
-			.skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
-			.toArray()
-			.then((result) => {
-				res.success({
-					data: result,
-				});
-			});
-	}
+    const data = await getUserModel()
+      .find()
+      .sort()
+      .skip(skip)
+      .limit(perPage)
+      .toArray()
 
-	// [GET] /user/:id
-	show(req, res, next) {
-		getUserModel()
-			.findOne({
-				_id: ObjectId(req.params.id),
-			})
-			.then((result) => {
-				res.success({
-					result,
-				});
-			});
-	}
+    res.success({
+      currentPage,
+      totalPage,
+      data,
+    })
+  }
 
-	// [POST] /user
-	store(req, res, next) {
-		// Validation
-		const validation = UserRequest.create(req.body);
+  // [GET] /user/:id
+  show(req, res, next) {
+    getUserModel()
+      .findOne({
+        _id: ObjectId(req.params.id),
+      })
+      .then((result) => {
+        res.success({
+          result,
+        })
+      })
+  }
 
-		if (validation.error)
-			return res.json({
-				status: 'error',
-				errors: validation.error.details,
-			});
+  // [POST] /user
+  store(req, res, next) {
+    // Validation
+    const validation = UserRequest.create(req.body)
 
-		getUserModel()
-			.insertOne({
-				...validation.value,
-				created_at: Date.now,
-				updated_at: Date.now,
-				deleted: false,
-			})
-			.then((rs) => {
-				return res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    if (validation.error)
+      return res.json({
+        status: 'error',
+        errors: validation.error.details,
+      })
 
-	//[PUT] /user/:id
-	update(req, res, next) {
-		// Validation
-		const validation = UserRequest.update(req.body);
+    getUserModel()
+      .insertOne({
+        ...validation.value,
+        created_at: Date.now,
+        updated_at: Date.now,
+        deleted: false,
+      })
+      .then((rs) => {
+        return res.json({
+          status: 'success',
+          data: rs,
+        })
+      })
+  }
 
-		if (validation.error)
-			return res.json({
-				status: 'error',
-				errors: validation.error.details,
-			});
+  //[PUT] /user/:id
+  update(req, res, next) {
+    // Validation
+    const validation = UserRequest.update(req.body)
 
-		getUserModel()
-			.updateOne(
-				{
-					_id: ObjectId(req.params.id),
-				},
-				{
-					$set: validation.value,
-					$currentDate: { updated_at: true },
-				}
-			)
-			.then((rs) => {
-				res.status(200);
-				res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    if (validation.error)
+      return res.json({
+        status: 'error',
+        errors: validation.error.details,
+      })
 
-	// [DELETE] /user/:id
-	destroy(req, res, next) {
-		getUserModel()
-			.deleteOne({ _id: req.params.id })
-			.then((rs) => {
-				res.json({
-					status: 'success',
-					data: rs,
-				});
-			});
-	}
+    getUserModel()
+      .updateOne(
+        {
+          _id: ObjectId(req.params.id),
+        },
+        {
+          $set: validation.value,
+          $currentDate: { updated_at: true },
+        }
+      )
+      .then((rs) => {
+        res.status(200)
+        res.json({
+          status: 'success',
+          data: rs,
+        })
+      })
+  }
+
+  // [DELETE] /user/:id
+  destroy(req, res, next) {
+    getUserModel()
+      .deleteOne({ _id: req.params.id })
+      .then((rs) => {
+        res.json({
+          status: 'success',
+          data: rs,
+        })
+      })
+  }
 }
 
-export default new UserController();
+export default new UserController()
