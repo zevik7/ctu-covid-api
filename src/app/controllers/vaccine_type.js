@@ -10,8 +10,12 @@ class VaccinationController {
     const skip = (currentPage - 1) * perPage
     const totalPage = await getVaccine_typeModel().countDocuments({})
 
+    for (const key in req.query) {
+      req.query[key] = new RegExp(req.query[key])
+    }
+
     const data = await getVaccine_typeModel()
-      .find()
+      .find(req.query)
       .sort()
       .skip(skip)
       .limit(perPage)

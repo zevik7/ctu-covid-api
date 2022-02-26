@@ -10,8 +10,12 @@ class HealthDeclarationController {
     const skip = (currentPage - 1) * perPage
     const totalPage = await getHealthDeclarationModel().countDocuments({})
 
+    for (const key in req.query) {
+      req.query[key] = new RegExp(req.query[key])
+    }
+
     const data = await getHealthDeclarationModel()
-      .find()
+      .find(req.query)
       .sort()
       .skip(skip)
       .limit(perPage)
