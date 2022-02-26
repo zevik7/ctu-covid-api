@@ -8,9 +8,7 @@ class VaccinationController {
 		const pageNum = req.query.page;
 
 		getVaccinaModel()
-			.find({
-				deleted: false,
-			})
+			.find({})
 			.sort()
 			.limit(5)
 			.skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)

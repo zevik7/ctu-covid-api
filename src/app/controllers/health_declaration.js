@@ -8,9 +8,7 @@ class HealthDeclarationController {
 		const pageNum = req.query.page;
 
 		getHealthDeclarationModel()
-			.find({
-				deleted: false,
-			})
+			.find({})
 			.sort()
 			.limit(5)
 			.skip(pageNum > 0 ? (pageNum - 1) * 5 : 0)
