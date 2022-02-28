@@ -1,6 +1,6 @@
 import express from 'express'
+
 import handleResponse from '#middlewares/handleResponse.js'
-import handleError from '#middlewares/handleError.js'
 import authMiddleware from '#middlewares/auth.js'
 
 import SitesRouter from './sites.js'
@@ -17,6 +17,8 @@ router.use(handleResponse)
 
 router.use('/', SitesRouter)
 
+router.use('/admin/auth', AuthRouter)
+
 router.use('/user', authMiddleware, UserRouter)
 
 router.use('/heath_declaration', authMiddleware, DeclarationRouter)
@@ -27,9 +29,6 @@ router.use('/vaccination', authMiddleware, VaccinationRouter)
 
 router.use('/vaccine_type', authMiddleware, VaccinationRouter)
 
-router.use('/admin/auth', authMiddleware, AuthRouter)
-
 // Custom handle error
-// router.use(handleError);
 
 export default router

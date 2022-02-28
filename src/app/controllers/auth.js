@@ -3,25 +3,28 @@ import jwt from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import getUserModel from '#models/User.js'
 import auth from '#config/auth.config.js '
+import AuthRequest from '#requests/Auth.js'
 
 class LoginController {
   //[POST] /admin/auth/login
   async login(req, res, next) {
     try {
-      const { username, password } = req.body
+      const validation = AuthRequest.login(req.body)
+
+      if (validation.error) return res.badreq(validation.error.details)
+
+      const { username, password } = validation.value
       const user = await getUserModel().findOne({ username })
 
       if (!user)
-        return res.error({
-          status: 'error',
+        return res.badreq({
           message: 'Tên đăng nhập hoặc mật khẩu không đúng',
         })
 
       const validPass = await bcrypt.compare(password, user.password)
 
       if (!validPass)
-        return res.status(404).json({
-          status: 'error',
+        return res.badreq({
           message: 'Tên đăng nhập hoặc mật khẩu không đúng',
         })
 
@@ -38,12 +41,10 @@ class LoginController {
 
       delete user.password
 
-      res.success({
-        data: { ...user, token },
-      })
+      return res.success({ ...user, token })
     } catch (err) {
-      return res.error({
-        errors: err,
+      return res.internal({
+        message: 'Something failed on server',
       })
     }
   }
