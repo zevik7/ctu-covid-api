@@ -45,13 +45,13 @@ export default async () => {
       name,
       birthday,
       gender,
-      contact: {
-        email,
-        phone,
-        address,
-      },
+      email,
+      phone,
+      address,
       role: 'user',
       avatar,
+      tot_injection: 2,
+      tot_declaration: 10,
       created_at: new Date(),
       updated_at: new Date(),
     })

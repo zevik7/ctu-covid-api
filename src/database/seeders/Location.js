@@ -10,21 +10,22 @@ export default async (qty) => {
       console.log('Remove all previous locations successful')
     })
 
-  const userIds = await getUserModel().find({}).project({ _id: 1 }).toArray()
+  const admin = await getUserModel().findOne({ role: 'admin' })
 
   const locations = []
 
   for (let i = 0; i < qty; i++) {
-    const qr_code = ''
-    const created_by = faker.random.arrayElement(userIds)._id
-    const address = ''
+    const name = ''
     const created_at = new Date()
     const updated_at = new Date()
 
     locations.push({
-      qr_code,
-      address,
-      created_by,
+      name,
+      created_by: {
+        _id: admin._id,
+        name: admin.name,
+        email: admin.email,
+      },
       created_at,
       updated_at,
     })

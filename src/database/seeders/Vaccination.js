@@ -13,16 +13,13 @@ export default async (qty) => {
 
   const userIds = await getUserModel().find({}).project({ _id: 1 }).toArray()
 
-  const vaccineTypeIds = await getVaccineTypeModel()
-    .find({})
-    .project({ _id: 1 })
-    .toArray()
+  const vaccineTypes = await getVaccineTypeModel().find({}).toArray()
 
   const vaccinations = []
 
   for (let i = 0; i < qty; i++) {
     const user_id = faker.random.arrayElement(userIds)._id
-    const vaccine_type_id = faker.random.arrayElement(vaccineTypeIds)._id
+    const vaccine_type = faker.random.arrayElement(vaccineTypes)
     const injection_date = faker.date.between('11-1-2021', '5-1-2022')
     const images = [
       {
@@ -33,7 +30,10 @@ export default async (qty) => {
 
     vaccinations.push({
       user_id,
-      vaccine_type_id,
+      vaccine_type: {
+        _id: vaccine_type._id,
+        name: vaccine_type.name,
+      },
       injection_date,
       images,
       created_at: new Date(),
@@ -44,6 +44,6 @@ export default async (qty) => {
   await getVaccinationModel()
     .insertMany(vaccinations)
     .then((rs) => {
-      console.log('User - seeding successful')
+      console.log('Vaccination - seeding successful')
     })
 }

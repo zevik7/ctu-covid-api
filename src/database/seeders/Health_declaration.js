@@ -11,23 +11,28 @@ export default async (qty) => {
       console.log('Remove all previous Health_declarations successful')
     })
 
-  const userIds = await getUserModel().find({}).project({ _id: 1 }).toArray()
+  const users = await getUserModel().find({}).toArray()
 
-  const locationIds = await getLocationModel()
-    .find({})
-    .project({ _id: 1 })
-    .toArray()
+  const locations = await getLocationModel().find({}).toArray()
 
   const health_declarations = []
 
   for (let i = 0; i < qty; i++) {
-    const user_id = faker.random.arrayElement(userIds)._id
-    const location_id = faker.random.arrayElement(locationIds)._id
+    const user = faker.random.arrayElement(users)
+    const location = faker.random.arrayElement(locations)
     const created_at = new Date()
 
     health_declarations.push({
-      user_id,
-      location_id,
+      user: {
+        _id: user._id,
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
+      },
+      location: {
+        _id: location._id,
+        name: location.name,
+      },
       created_at,
     })
   }
