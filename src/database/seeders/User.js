@@ -40,6 +40,7 @@ export default async () => {
     const email = firstName.split(' ').at(-1) + '@student.ctu.edu.vn'
     const phone = faker.phone.phoneNumberFormat()
     const address = faker.address.city()
+    const avatar = '/images/default_avatar.jpeg'
     users.push({
       name,
       birthday,
@@ -50,6 +51,7 @@ export default async () => {
         address,
       },
       role: 'user',
+      avatar,
       created_at: new Date(),
       updated_at: new Date(),
     })

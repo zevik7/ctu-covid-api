@@ -5,26 +5,26 @@ import { ObjectId } from 'mongodb'
 class UserController {
   // [GET] /user
   async index(req, res, next) {
-    const currentPage = req.query.page || 1
-    const perPage = 20
+    const currentPage = +req.query.currentPage || 1
+    const perPage = +req.query.perPage || 20
     const skip = (currentPage - 1) * perPage
     const totalPage = await getUserModel().countDocuments({})
 
-    for (const key in req.query) {
-      req.query[key] = new RegExp(req.query[key])
-    }
-
     console.log(req.query)
+    // for (const key in req.query) {
+    //   req.query[key] = new RegExp(req.query[key])
+    // }
 
     const data = await getUserModel()
-      .find(req.query)
+      .find()
       .sort()
-      .skip(skip)
-      .limit(perPage)
+      .skip(+skip)
+      .limit(+perPage)
       .toArray()
 
     res.success({
       currentPage,
+      perPage,
       totalPage,
       data,
     })
