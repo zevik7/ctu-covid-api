@@ -5,110 +5,101 @@ import { ObjectId } from 'mongodb'
 class UserController {
   // [GET] /user
   async index(req, res, next) {
-    const currentPage = +req.query.currentPage || 1
-    const perPage = +req.query.perPage || 20
-    const skip = (currentPage - 1) * perPage
-    const totalPage = await getUserModel().countDocuments({})
+    try {
+      const currentPage = +req.query.currentPage || 1
+      const perPage = +req.query.perPage || 20
+      const skip = (currentPage - 1) * perPage
+      const totalPage = await getUserModel().countDocuments({})
 
-    console.log(req.query)
-    // for (const key in req.query) {
-    //   req.query[key] = new RegExp(req.query[key])
-    // }
+      const data = await getUserModel()
+        .find()
+        .sort()
+        .skip(+skip)
+        .limit(+perPage)
+        .toArray()
 
-    const data = await getUserModel()
-      .find()
-      .sort()
-      .skip(+skip)
-      .limit(+perPage)
-      .toArray()
-
-    res.success({
-      currentPage,
-      perPage,
-      totalPage,
-      data,
-    })
+      return res.success({
+        currentPage,
+        perPage,
+        totalPage,
+        data,
+      })
+    } catch (error) {
+      return req.badreq(error)
+    }
   }
 
-  // [GET] /user/:id
-  show(req, res, next) {
-    getUserModel()
-      .findOne({
-        _id: ObjectId(req.params.id),
-      })
-      .then((result) => {
-        res.success({
-          result,
+  // [GET] /user?_id
+  async show(req, res, next) {
+    try {
+      const data = getUserModel()
+        .findOne({
+          _id: ObjectId(req.params.id),
         })
+        .then((rs) => rs)
+      return res.success({
+        data,
       })
+    } catch (error) {
+      return res.badreq(error)
+    }
   }
 
   // [POST] /user
-  store(req, res, next) {
-    // Validation
-    const validation = UserRequest.create(req.body)
-
-    if (validation.error)
-      return res.json({
-        status: 'error',
-        errors: validation.error.details,
-      })
-
-    getUserModel()
-      .insertOne({
-        ...validation.value,
-        created_at: Date.now,
-        updated_at: Date.now,
-        deleted: false,
-      })
-      .then((rs) => {
-        return res.json({
-          status: 'success',
-          data: rs,
+  async store(req, res, next) {
+    try {
+      const data = await getUserModel()
+        .insertOne({
+          ...req.body,
+          created_at: Date.now,
+          updated_at: Date.now,
+          deleted: false,
         })
+        .then((rs) => rs)
+
+      return res.success({
+        data: data,
       })
+    } catch (error) {
+      return res.badreq(error)
+    }
   }
 
-  //[PUT] /user/:id
-  update(req, res, next) {
-    // Validation
-    const validation = UserRequest.update(req.body)
+  //[PUT] /user
+  async update(req, res, next) {
+    try {
+      const data = await getUserModel()
+        .updateOne(
+          {
+            _id: ObjectId(req.query._id),
+          },
+          {
+            $set: req.body,
+            $currentDate: { updated_at: true },
+          }
+        )
+        .then((rs) => rs)
 
-    if (validation.error)
-      return res.json({
-        status: 'error',
-        errors: validation.error.details,
+      return res.success({
+        data,
       })
-
-    getUserModel()
-      .updateOne(
-        {
-          _id: ObjectId(req.params.id),
-        },
-        {
-          $set: validation.value,
-          $currentDate: { updated_at: true },
-        }
-      )
-      .then((rs) => {
-        res.status(200)
-        res.json({
-          status: 'success',
-          data: rs,
-        })
-      })
+    } catch (error) {
+      return res.badreq(error)
+    }
   }
 
-  // [DELETE] /user/:id
-  destroy(req, res, next) {
-    getUserModel()
-      .deleteOne({ _id: req.params.id })
-      .then((rs) => {
-        res.json({
-          status: 'success',
-          data: rs,
-        })
+  // [DELETE] /user?ids=[]
+  async destroy(req, res, next) {
+    try {
+      const ids = req.query.ids.map((id, index) => ObjectId(id))
+      const data = await getUserModel().deleteMany({ _id: { $in: ids } })
+
+      return res.success({
+        data,
       })
+    } catch (error) {
+      return res.badreq(error)
+    }
   }
 }
 

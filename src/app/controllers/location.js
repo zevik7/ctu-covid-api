@@ -1,114 +1,104 @@
 import getLocationModel from '#models/Location.js'
-import LocationRequest from '#requests/Location.js'
 import { ObjectId } from 'mongodb'
 
 class LocationController {
-  // [GET] /user
+  // [GET] /vaccination
   async index(req, res, next) {
-    const currentPage = req.query.page || 1
-    const perPage = 20
-    const skip = (currentPage - 1) * perPage
-    const totalPage = await getLocationModel().countDocuments({})
+    try {
+      const currentPage = +req.query.currentPage || 1
+      const perPage = +req.query.perPage || 20
+      const skip = (currentPage - 1) * perPage
+      const totalPage = await getLocationModel().countDocuments({})
 
-    for (const key in req.query) {
-      req.query[key] = new RegExp(req.query[key])
+      const data = await getLocationModel()
+        .find()
+        .sort()
+        .skip(+skip)
+        .limit(+perPage)
+        .toArray()
+
+      return res.success({
+        currentPage,
+        perPage,
+        totalPage,
+        data,
+      })
+    } catch (error) {
+      return req.badreq(error)
     }
-
-    const data = await getLocationModel()
-      .find(req.query)
-      .sort()
-      .skip(skip)
-      .limit(perPage)
-      .toArray()
-
-    res.success({
-      currentPage,
-      totalPage,
-      data,
-    })
   }
 
-  // [GET] /user/:id
-  show(req, res, next) {
-    getLocationModel()
-      .findOne({
-        _id: ObjectId(req.params.id),
-      })
-      .then((rs) => {
-        res.status(200)
-        res.json({
-          status: 'success',
-          data: rs,
-        })
-      })
-  }
-
-  // [POST] /user
-  store(req, res, next) {
-    // Validation
-    const validation = LocationRequest.create(req.body)
-
-    if (validation.error)
-      return res.json({
-        status: 'error',
-        errors: validation.error.details,
-      })
-
-    getLocationModel()
-      .insertOne({
-        ...validation.value,
-        created_at: Date.now,
-        updated_at: Date.now,
-        deleted: false,
-      })
-      .then((rs) => {
-        return res.json({
-          status: 'success',
-          data: rs,
-        })
-      })
-  }
-
-  //[PUT] /user/:id
-  update(req, res, next) {
-    // Validation
-    const validation = LocationRequest.update(req.body)
-
-    if (validation.error)
-      return res.json({
-        status: 'error',
-        errors: validation.error.details,
-      })
-
-    getLocationModel()
-      .updateOne(
-        {
+  // [GET] /vaccination?_id
+  async show(req, res, next) {
+    try {
+      const data = getLocationModel()
+        .findOne({
           _id: ObjectId(req.params.id),
-        },
-        {
-          $set: validation.value,
-          $currentDate: { updated_at: true },
-        }
-      )
-      .then((rs) => {
-        res.status(200)
-        res.json({
-          status: 'success',
-          data: rs,
         })
+        .then((rs) => rs)
+      return res.success({
+        data,
       })
+    } catch (error) {
+      return res.badreq(error)
+    }
   }
 
-  // [DELETE] /user/:id
-  destroy(req, res, next) {
-    getLocationModel()
-      .deleteOne({ _id: req.params.id })
-      .then((rs) => {
-        res.json({
-          status: 'success',
-          data: rs,
+  // [POST] /vaccination
+  async store(req, res, next) {
+    try {
+      const data = await getLocationModel()
+        .insertOne({
+          ...req.body,
+          created_at: Date.now,
+          updated_at: Date.now,
+          deleted: false,
         })
+        .then((rs) => rs)
+
+      return res.success({
+        data: data,
       })
+    } catch (error) {
+      return res.badreq(error)
+    }
+  }
+
+  //[PUT] /vaccination
+  async update(req, res, next) {
+    try {
+      const data = await getLocationModel()
+        .updateOne(
+          {
+            _id: ObjectId(req.query._id),
+          },
+          {
+            $set: req.body,
+            $currentDate: { updated_at: true },
+          }
+        )
+        .then((rs) => rs)
+
+      return res.success({
+        data,
+      })
+    } catch (error) {
+      return res.badreq(error)
+    }
+  }
+
+  // [DELETE] /vaccination?ids=[]
+  async destroy(req, res, next) {
+    try {
+      const ids = req.query.ids.map((id, index) => ObjectId(id))
+      const data = await getLocationModel().deleteMany({ _id: { $in: ids } })
+
+      return res.success({
+        data,
+      })
+    } catch (error) {
+      return res.badreq(error)
+    }
   }
 }
 

@@ -8,6 +8,7 @@ import UserRouter from './user.js'
 import DeclarationRouter from './declaration.js'
 import LocationRouter from './location.js'
 import VaccinationRouter from './vaccination.js'
+import VaccineTypeRouter from './vaccine_type.js'
 import AuthRouter from './auth.js'
 
 const router = express.Router()
@@ -27,7 +28,7 @@ router.use('/location', authMiddleware, LocationRouter)
 
 router.use('/vaccination', authMiddleware, VaccinationRouter)
 
-router.use('/vaccine_type', authMiddleware, VaccinationRouter)
+router.use('/vaccine_type', authMiddleware, VaccineTypeRouter)
 
 // Custom handle error
 

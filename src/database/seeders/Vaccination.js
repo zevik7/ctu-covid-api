@@ -11,14 +11,14 @@ export default async (qty) => {
       console.log('Remove all previous vaccinations successful')
     })
 
-  const userIds = await getUserModel().find({}).project({ _id: 1 }).toArray()
+  const users = await getUserModel().find({}).toArray()
 
   const vaccineTypes = await getVaccineTypeModel().find({}).toArray()
 
   const vaccinations = []
 
   for (let i = 0; i < qty; i++) {
-    const user_id = faker.random.arrayElement(userIds)._id
+    const user = faker.random.arrayElement(users)
     const vaccine_type = faker.random.arrayElement(vaccineTypes)
     const injection_date = faker.date.between('11-1-2021', '5-1-2022')
     const images = [
@@ -29,7 +29,12 @@ export default async (qty) => {
     ]
 
     vaccinations.push({
-      user_id,
+      user: {
+        user_id: user._id,
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
+      },
       vaccine_type: {
         _id: vaccine_type._id,
         name: vaccine_type.name,
