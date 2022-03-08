@@ -30,7 +30,7 @@ export default async (qty) => {
 
     vaccinations.push({
       user: {
-        user_id: user._id,
+        _id: user._id,
         name: user.name,
         phone: user.phone,
         email: user.email,

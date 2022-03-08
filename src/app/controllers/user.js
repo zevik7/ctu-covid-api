@@ -6,13 +6,31 @@ class UserController {
   // [GET] /user
   async index(req, res, next) {
     try {
-      const currentPage = +req.query.currentPage || 1
-      const perPage = +req.query.perPage || 20
+      let { currentPage, perPage, ...filterParams } = req.query
+      currentPage = +currentPage || 1
+      perPage = +perPage || 20
       const skip = (currentPage - 1) * perPage
       const totalPage = await getUserModel().countDocuments({})
 
+      // Create regex for search
+      if (filterParams) {
+        if (filterParams.hasOwnProperty('search') && filterParams.search) {
+          filterParams = {
+            $or: [
+              { name: new RegExp(filterParams.search, 'i') },
+              { phone: new RegExp(filterParams.search, 'i') },
+              { email: new RegExp(filterParams.search, 'i') },
+            ],
+          }
+        } else {
+          filterParams = {}
+        }
+      }
+
+      console.log(filterParams)
+
       const data = await getUserModel()
-        .find()
+        .find(filterParams)
         .sort()
         .skip(+skip)
         .limit(+perPage)
