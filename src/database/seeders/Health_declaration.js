@@ -33,10 +33,11 @@ export default async (qty) => {
       location: {
         _id: location._id,
         name: location.name,
+        position: location.position,
       },
       status: {
-        danger_area: false,
-        symptom: false,
+        danger_area: Math.random() < 0.2 ? true : false,
+        symptom: Math.random() < 0.2 ? true : false,
       },
       created_at,
     })
