@@ -28,10 +28,15 @@ export default async (qty) => {
         name: user.name,
         phone: user.phone,
         email: user.email,
+        address: user.address,
       },
       location: {
         _id: location._id,
         name: location.name,
+      },
+      status: {
+        danger_area: false,
+        symptom: false,
       },
       created_at,
     })

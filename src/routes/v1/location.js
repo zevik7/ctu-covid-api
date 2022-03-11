@@ -7,10 +7,10 @@ router.get('/', controller.index)
 
 router.post('/', controller.store)
 
-router.get('/:id', controller.show)
+router.get('/', controller.show)
 
-router.put('/:id', controller.update)
+router.put('/', controller.update)
 
-router.delete('/:id', controller.destroy)
+router.delete('/', controller.destroy)
 
 export default router

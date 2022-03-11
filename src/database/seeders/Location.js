@@ -12,21 +12,35 @@ export default async () => {
 
   const admin = await getUserModel().findOne({ role: 'admin' })
 
-  const names = ['101 Nhà học C1', '202 Nhà học C1', 'Căn tin Khoa CNTT&TT']
+  const locationsExample = [
+    {
+      name: 'Hội Trường rùa',
+      latlng: { lat: 10.02929, lng: 105.76944 },
+    },
+    {
+      name: 'Phòng 202 Nhà học C1',
+      latlng: { lat: 10.03058, lng: 105.76991 },
+    },
+    {
+      name: 'Căn tin Khoa CNTT&TT',
+      latlng: { lat: 10.03139, lng: 105.76951 },
+    },
+  ]
 
   let locations = []
 
-  for (let i = 0; i < names.length; i++) {
+  for (let i = 0; i < locationsExample.length; i++) {
     const created_at = new Date()
     const updated_at = new Date()
 
     locations.push({
-      name: names[i],
+      name: locationsExample[i].name,
       created_by: {
         _id: admin._id,
         name: admin.name,
         email: admin.email,
       },
+      position: locationsExample[i].latlng,
       created_at,
       updated_at,
     })
