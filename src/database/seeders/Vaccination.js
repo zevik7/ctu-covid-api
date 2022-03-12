@@ -40,6 +40,7 @@ export default async (qty) => {
         name: vaccine_type.name,
       },
       injection_date,
+      time: Math.ceil(Math.random() * 3),
       images,
       created_at: new Date(),
       updated_at: new Date(),

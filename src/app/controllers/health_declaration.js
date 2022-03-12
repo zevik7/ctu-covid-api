@@ -2,19 +2,34 @@ import getHealthDeclarationModel from '#models/Health_declaration.js'
 import { ObjectId } from 'mongodb'
 
 class HealthDeclarationController {
-  // [GET] /vaccination
+  // [GET] /health_declaration
   async index(req, res, next) {
     try {
-      const currentPage = +req.query.currentPage || 1
-      const perPage = +req.query.perPage || 20
-      const skip = (currentPage - 1) * perPage
+      let { currentPage, perPage, ...filter } = req.query
+      // Convert to number
+      currentPage = +currentPage
+      perPage = +perPage || 0
+
+      // Calculation pagination
+      const skip = (currentPage - 1) * perPage || 0
       const totalPage = await getHealthDeclarationModel().countDocuments({})
 
+      // Filters
+      if (filter) {
+        if (filter.hasOwnProperty('location._id'))
+          filter['location._id'] = ObjectId(filter['location._id'])
+
+        if (filter.hasOwnProperty('created_at_lower')) {
+          filter.created_at = { $lte: new Date(filter.created_at_lower) }
+          delete filter.created_at_lower
+        }
+      }
+
       const data = await getHealthDeclarationModel()
-        .find()
+        .find(filter)
         .sort()
-        .skip(+skip)
-        .limit(+perPage)
+        .skip(skip)
+        .limit(perPage)
         .toArray()
 
       return res.success({
@@ -24,7 +39,7 @@ class HealthDeclarationController {
         data,
       })
     } catch (error) {
-      return req.badreq(error)
+      return res.badreq(error)
     }
   }
 

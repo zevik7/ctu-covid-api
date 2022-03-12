@@ -25,8 +25,8 @@ export default async () => {
       password: bcrypt.hashSync('admin'),
       avatar: '/images/default_avatar.jpeg',
       role: 'admin',
-      created_at: Date.now,
-      updated_at: Date.now,
+      created_at: new Date(),
+      updated_at: new Date(),
     },
   ]
 
