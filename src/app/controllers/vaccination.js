@@ -5,22 +5,26 @@ class VaccinationController {
   // [GET] /vaccination
   async index(req, res, next) {
     try {
-      const currentPage = +req.query.currentPage || 1
-      const perPage = +req.query.perPage || 20
+      let { currentPage, perPage, ...filter } = req.query
+      // Convert to number
+      currentPage = +currentPage || 1
+      perPage = +perPage || 0
+
+      // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const totalPage = await getVaccination().countDocuments({})
+      const count = await getVaccination().countDocuments({})
 
       const data = await getVaccination()
-        .find()
+        .find(filter)
         .sort()
-        .skip(+skip)
-        .limit(+perPage)
+        .skip(skip)
+        .limit(perPage)
         .toArray()
 
       return res.success({
         currentPage,
         perPage,
-        totalPage,
+        count,
         data,
       })
     } catch (error) {
@@ -31,7 +35,7 @@ class VaccinationController {
   // [GET] /vaccination?_id
   async show(req, res, next) {
     try {
-      const data = getVaccination()
+      const data = await getVaccination()
         .findOne({
           _id: ObjectId(req.params.id),
         })
@@ -52,7 +56,6 @@ class VaccinationController {
           ...req.body,
           created_at: Date.now,
           updated_at: Date.now,
-          deleted: false,
         })
         .then((rs) => rs)
 

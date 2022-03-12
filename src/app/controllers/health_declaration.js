@@ -7,12 +7,12 @@ class HealthDeclarationController {
     try {
       let { currentPage, perPage, ...filter } = req.query
       // Convert to number
-      currentPage = +currentPage
+      currentPage = +currentPage || 1
       perPage = +perPage || 0
 
       // Calculation pagination
-      const skip = (currentPage - 1) * perPage || 0
-      const totalPage = await getHealthDeclarationModel().countDocuments({})
+      const skip = (currentPage - 1) * perPage
+      const count = await getHealthDeclarationModel().countDocuments({})
 
       // Filters
       if (filter) {
@@ -35,7 +35,7 @@ class HealthDeclarationController {
       return res.success({
         currentPage,
         perPage,
-        totalPage,
+        count,
         data,
       })
     } catch (error) {
@@ -43,10 +43,10 @@ class HealthDeclarationController {
     }
   }
 
-  // [GET] /vaccination?_id
+  // [GET] /health_declaration?_id
   async show(req, res, next) {
     try {
-      const data = getHealthDeclarationModel()
+      const data = await getHealthDeclarationModel()
         .findOne({
           _id: ObjectId(req.params.id),
         })
@@ -59,7 +59,7 @@ class HealthDeclarationController {
     }
   }
 
-  // [POST] /vaccination
+  // [POST] /health_declaration
   async store(req, res, next) {
     try {
       const data = await getHealthDeclarationModel()
@@ -67,7 +67,6 @@ class HealthDeclarationController {
           ...req.body,
           created_at: Date.now,
           updated_at: Date.now,
-          deleted: false,
         })
         .then((rs) => rs)
 
@@ -79,7 +78,7 @@ class HealthDeclarationController {
     }
   }
 
-  //[PUT] /vaccination
+  //[PUT] /health_declaration
   async update(req, res, next) {
     try {
       const data = await getHealthDeclarationModel()
@@ -102,7 +101,7 @@ class HealthDeclarationController {
     }
   }
 
-  // [DELETE] /vaccination?ids=[]
+  // [DELETE] /health_declaration?ids=[]
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))

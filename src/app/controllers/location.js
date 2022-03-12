@@ -2,25 +2,29 @@ import getLocationModel from '#models/Location.js'
 import { ObjectId } from 'mongodb'
 
 class LocationController {
-  // [GET] /vaccination
+  // [GET] /location
   async index(req, res, next) {
     try {
-      const currentPage = +req.query.currentPage || 1
-      const perPage = +req.query.perPage || 20
+      let { currentPage, perPage, ...filter } = req.query
+      // Convert to number
+      currentPage = +currentPage || 1
+      perPage = +perPage || 0
+
+      // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const totalPage = await getLocationModel().countDocuments({})
+      const count = await getLocationModel().countDocuments({})
 
       const data = await getLocationModel()
         .find()
         .sort()
-        .skip(+skip)
-        .limit(+perPage)
+        .skip(skip)
+        .limit(perPage)
         .toArray()
 
       return res.success({
         currentPage,
         perPage,
-        totalPage,
+        count,
         data,
       })
     } catch (error) {
@@ -28,10 +32,10 @@ class LocationController {
     }
   }
 
-  // [GET] /vaccination?_id
+  // [GET] /location?_id
   async show(req, res, next) {
     try {
-      const data = getLocationModel()
+      const data = await getLocationModel()
         .findOne({
           _id: ObjectId(req.params.id),
         })
@@ -44,7 +48,7 @@ class LocationController {
     }
   }
 
-  // [POST] /vaccination
+  // [POST] /location
   async store(req, res, next) {
     try {
       const data = await getLocationModel()
@@ -52,7 +56,6 @@ class LocationController {
           ...req.body,
           created_at: Date.now,
           updated_at: Date.now,
-          deleted: false,
         })
         .then((rs) => rs)
 
@@ -64,7 +67,7 @@ class LocationController {
     }
   }
 
-  //[PUT] /vaccination
+  //[PUT] /location
   async update(req, res, next) {
     try {
       const data = await getLocationModel()
@@ -87,7 +90,7 @@ class LocationController {
     }
   }
 
-  // [DELETE] /vaccination?ids=[]
+  // [DELETE] /location?ids=[]
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))

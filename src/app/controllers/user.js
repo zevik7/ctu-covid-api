@@ -6,40 +6,41 @@ class UserController {
   // [GET] /user
   async index(req, res, next) {
     try {
-      let { currentPage, perPage, ...filterParams } = req.query
+      let { currentPage, perPage, ...filter } = req.query
+      // Convert to number
       currentPage = +currentPage || 1
-      perPage = +perPage || 20
+      perPage = +perPage || 0
+
+      // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const totalPage = await getUserModel().countDocuments({})
+      const count = await getUserModel().countDocuments({})
 
       // Create regex for search
-      if (filterParams) {
-        if (filterParams.hasOwnProperty('search') && filterParams.search) {
-          filterParams = {
+      if (filter) {
+        if (filter.hasOwnProperty('search') && filter.search) {
+          filter = {
             $or: [
-              { name: new RegExp(filterParams.search, 'i') },
-              { phone: new RegExp(filterParams.search, 'i') },
-              { email: new RegExp(filterParams.search, 'i') },
+              { name: new RegExp(filter.search, 'i') },
+              { phone: new RegExp(filter.search, 'i') },
+              { email: new RegExp(filter.search, 'i') },
             ],
           }
         } else {
-          filterParams = {}
+          filter = {}
         }
       }
 
-      console.log(filterParams)
-
       const data = await getUserModel()
-        .find(filterParams)
+        .find(filter)
         .sort()
-        .skip(+skip)
-        .limit(+perPage)
+        .skip(skip)
+        .limit(perPage)
         .toArray()
 
       return res.success({
         currentPage,
         perPage,
-        totalPage,
+        count,
         data,
       })
     } catch (error) {
@@ -50,7 +51,7 @@ class UserController {
   // [GET] /user?_id
   async show(req, res, next) {
     try {
-      const data = getUserModel()
+      const data = await getUserModel()
         .findOne({
           _id: ObjectId(req.params.id),
         })
@@ -71,7 +72,6 @@ class UserController {
           ...req.body,
           created_at: Date.now,
           updated_at: Date.now,
-          deleted: false,
         })
         .then((rs) => rs)
 

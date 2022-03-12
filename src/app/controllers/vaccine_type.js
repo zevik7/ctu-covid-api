@@ -2,25 +2,29 @@ import getVaccineTypeModel from '#models/Vaccine_type.js'
 import { ObjectId } from 'mongodb'
 
 class VaccineTypeController {
-  // [GET] /user
+  // [GET] /vaccine_type
   async index(req, res, next) {
     try {
-      const currentPage = +req.query.currentPage || 1
-      const perPage = +req.query.perPage || 20
+      let { currentPage, perPage, ...filter } = req.query
+      // Convert to number
+      currentPage = +currentPage || 1
+      perPage = +perPage || 0
+
+      // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const totalPage = await getVaccineTypeModel().countDocuments({})
+      const count = await getVaccineTypeModel().countDocuments({})
 
       const data = await getVaccineTypeModel()
         .find()
         .sort()
-        .skip(+skip)
-        .limit(+perPage)
+        .skip(skip)
+        .limit(perPage)
         .toArray()
 
       return res.success({
         currentPage,
         perPage,
-        totalPage,
+        count,
         data,
       })
     } catch (error) {
@@ -28,10 +32,10 @@ class VaccineTypeController {
     }
   }
 
-  // [GET] /user?_id
+  // [GET] /vaccine_type?_id
   async show(req, res, next) {
     try {
-      const data = getVaccineTypeModel()
+      const data = await getVaccineTypeModel()
         .findOne({
           _id: ObjectId(req.params.id),
         })
@@ -44,7 +48,7 @@ class VaccineTypeController {
     }
   }
 
-  // [POST] /user
+  // [POST] /vaccine_type
   async store(req, res, next) {
     try {
       const data = await getVaccineTypeModel()
@@ -52,7 +56,6 @@ class VaccineTypeController {
           ...req.body,
           created_at: Date.now,
           updated_at: Date.now,
-          deleted: false,
         })
         .then((rs) => rs)
 
@@ -64,7 +67,7 @@ class VaccineTypeController {
     }
   }
 
-  //[PUT] /user
+  //[PUT] /vaccine_type
   async update(req, res, next) {
     try {
       const data = await getVaccineTypeModel()
@@ -87,7 +90,7 @@ class VaccineTypeController {
     }
   }
 
-  // [DELETE] /user?ids=[]
+  // [DELETE] /vaccine_type?ids=[]
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
