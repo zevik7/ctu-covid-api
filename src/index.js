@@ -2,9 +2,7 @@ import express from 'express'
 import morgan from 'morgan'
 import path from 'path'
 import cors from 'cors'
-import multer from 'multer'
 import { connectDB } from '#database/mongodb.js'
-
 import routeV1 from './routes/v1/index.js'
 
 const app = express()
@@ -28,10 +26,6 @@ app.use(morgan('combined'))
 // Parse
 app.use(express.json()) //x-form-www
 app.use(express.urlencoded({ extended: true })) //json
-
-// Parse form data
-const upload = multer()
-app.use(upload.array())
 
 // Static dir
 app.use(express.static(path.join(path.resolve(), 'src/public')))

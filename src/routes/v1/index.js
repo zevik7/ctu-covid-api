@@ -1,4 +1,5 @@
 import express from 'express'
+import multer from 'multer'
 
 import handleResponse from '#middlewares/handleResponse.js'
 import authMiddleware from '#middlewares/auth.js'

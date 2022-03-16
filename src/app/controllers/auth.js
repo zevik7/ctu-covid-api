@@ -30,7 +30,7 @@ class LoginController {
 
       const token = jwt.sign(
         {
-          id: user.id,
+          id: user._id,
           username: user.username,
         },
         process.env.JWT_ACCESS_KEY,
@@ -39,9 +39,11 @@ class LoginController {
         }
       )
 
-      delete user.password
+      const { avatar, name, _id } = user
 
-      return res.success({ ...user, token })
+      console.log(user)
+
+      return res.success({ avatar, name, _id, token })
     } catch (err) {
       return res.internal({
         message: 'Something failed on server',

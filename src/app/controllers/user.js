@@ -48,7 +48,7 @@ class UserController {
     }
   }
 
-  // [GET] /user?_id
+  // [GET] /user/:id
   async show(req, res, next) {
     try {
       const data = await getUserModel()
@@ -86,15 +86,20 @@ class UserController {
   //[PUT] /user
   async update(req, res, next) {
     try {
+      let user = req.body
+
+      if (req.file) user.avatar = '/images/user/' + req.file.filename
+
       const data = await getUserModel()
-        .updateOne(
+        .findOneAndUpdate(
           {
             _id: ObjectId(req.query._id),
           },
           {
             $set: req.body,
             $currentDate: { updated_at: true },
-          }
+          },
+          { returnNewDocument: true }
         )
         .then((rs) => rs)
 
