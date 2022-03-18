@@ -41,8 +41,6 @@ class LoginController {
 
       const { avatar, name, _id } = user
 
-      console.log(user)
-
       return res.success({ avatar, name, _id, token })
     } catch (err) {
       return res.internal({

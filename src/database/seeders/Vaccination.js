@@ -26,6 +26,10 @@ export default async (qty) => {
         url: '/images/vaccination_proof.jpg',
         desc: 'none',
       },
+      {
+        url: '/images/vaccination_proof.jpg',
+        desc: 'none',
+      },
     ]
 
     vaccinations.push({

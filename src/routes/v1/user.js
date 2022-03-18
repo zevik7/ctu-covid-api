@@ -6,7 +6,7 @@ const router = express.Router()
 
 // Form multipart parse
 const storage = multer.diskStorage({
-  destination: 'src/public/images/user',
+  destination: 'src/public/user',
   filename: function (req, file, cb) {
     cb(null, file.fieldname + '-' + Date.now())
   },
@@ -14,14 +14,14 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
-// For avatar image file
-router.use(upload.single('avatar'))
+// Get upload images file
+router.use(upload.fields([{ name: 'avatar', maxCount: 1 }]))
 
 router.get('/', controller.index)
 
 router.post('/', controller.store)
 
-router.get('/:id', controller.show)
+router.get('/:_id', controller.show)
 
 router.put('/', controller.update)
 

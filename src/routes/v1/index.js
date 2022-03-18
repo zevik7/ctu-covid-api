@@ -19,7 +19,7 @@ router.use(handleResponse)
 
 router.use('/', SitesRouter)
 
-router.use('/admin/auth', AuthRouter)
+router.use('/auth', AuthRouter)
 
 router.use('/user', authMiddleware, UserRouter)
 

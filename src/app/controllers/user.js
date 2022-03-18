@@ -48,12 +48,12 @@ class UserController {
     }
   }
 
-  // [GET] /user/:id
+  // [GET] /user/:_id
   async show(req, res, next) {
     try {
       const data = await getUserModel()
         .findOne({
-          _id: ObjectId(req.params.id),
+          _id: ObjectId(req.params._id),
         })
         .then((rs) => rs)
       return res.success({
@@ -88,7 +88,10 @@ class UserController {
     try {
       let user = req.body
 
-      if (req.file) user.avatar = '/images/user/' + req.file.filename
+      console.log(req.files)
+
+      if (req.files && req.files.avatar)
+        user.avatar = '/user/' + req.files.avatar[0].filename
 
       const data = await getUserModel()
         .findOneAndUpdate(
@@ -96,16 +99,16 @@ class UserController {
             _id: ObjectId(req.query._id),
           },
           {
-            $set: req.body,
+            $set: user,
             $currentDate: { updated_at: true },
           },
-          { returnNewDocument: true }
+          { returnDocument: 'after' }
         )
         .then((rs) => rs)
 
-      return res.success({
-        data,
-      })
+      const { avatar, name, _id } = data.value
+
+      return res.success({ avatar, name, _id })
     } catch (error) {
       return res.badreq(error)
     }
