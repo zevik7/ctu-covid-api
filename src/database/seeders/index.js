@@ -1,6 +1,6 @@
 import { connectDB } from '#database/mongodb.js'
 import userSeeder from './User.js'
-import vaccinationSeeder from './Vaccination.js'
+import injectionSeeder from './Injection.js'
 import vaccine_typeSeeder from './Vaccine_type.js'
 import locationSeeder from './Location.js'
 import health_declarationSeeder from './Health_declaration.js'
@@ -13,7 +13,7 @@ async function seedDB() {
 
   await vaccine_typeSeeder()
 
-  await vaccinationSeeder(200)
+  await injectionSeeder(200)
 
   await locationSeeder(200)
 

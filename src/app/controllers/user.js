@@ -13,7 +13,7 @@ class UserController {
 
       // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const count = await getUserModel().countDocuments({})
+      const count = await getUserModel().countDocuments({ role: 'user' })
 
       // Create regex for search
       if (filter) {
@@ -29,6 +29,8 @@ class UserController {
           filter = {}
         }
       }
+
+      filter.role = 'user'
 
       const data = await getUserModel()
         .find(filter)
@@ -67,9 +69,39 @@ class UserController {
   // [POST] /user
   async store(req, res, next) {
     try {
+      let user = req.body
+      let role = user.role || 'user'
+
+      if (req.files && req.files.avatar)
+        user.avatar = '/user/' + req.files.avatar[0].filename
+
+      // Unique email and phone
+      const checkEmail = UserRequest.checkUniqueField(
+        'email',
+        user.email,
+        req.query._id
+      )
+      const checkPhone = UserRequest.checkUniqueField(
+        'phone',
+        user.phone,
+        req.query._id
+      )
+
+      let uniqueMessage = {}
+
+      if (!checkEmail) uniqueMessage.email = 'Email đã được sử dụng'
+      if (!checkPhone) uniqueMessage.phone = 'Số điện thoại đã được sử dụng'
+
+      if (Object.keys(uniqueMessage).length !== 0)
+        throw {
+          errors: uniqueMessage,
+          type: 'validation',
+        }
+
       const data = await getUserModel()
         .insertOne({
           ...req.body,
+          role,
           created_at: Date.now,
           updated_at: Date.now,
         })
@@ -88,10 +120,29 @@ class UserController {
     try {
       let user = req.body
 
-      console.log(req.files)
-
       if (req.files && req.files.avatar)
         user.avatar = '/user/' + req.files.avatar[0].filename
+
+      // Unique email and phone
+      const checkEmail = await UserRequest.checkUniqueField(
+        { email: user.email },
+        req.query._id
+      )
+      const checkPhone = await UserRequest.checkUniqueField(
+        { phone: user.phone },
+        req.query._id
+      )
+
+      let uniqueMessage = {}
+
+      if (!checkEmail) uniqueMessage.email = 'Email đã được sử dụng'
+      if (!checkPhone) uniqueMessage.phone = 'Số điện thoại đã được sử dụng'
+
+      if (Object.keys(uniqueMessage).length !== 0)
+        throw {
+          errors: uniqueMessage,
+          type: 'validation',
+        }
 
       const data = await getUserModel()
         .findOneAndUpdate(

@@ -1,4 +1,6 @@
 import Joi from 'joi'
+import getUserModel from '#models/User.js'
+import { ObjectId } from 'mongodb'
 
 // schema options
 const options = {
@@ -41,7 +43,7 @@ const update = (data) => {
     password: Joi.string().min(6),
     avatar: Joi.string(),
     role: Joi.string().valid('admin', 'user'),
-    tot_vaccinations: Joi.number(),
+    tot_injections: Joi.number(),
     tot_heath_declaration: Joi.number(),
     tot_location: Joi.number(),
   })
@@ -52,4 +54,13 @@ const update = (data) => {
   return validationResult
 }
 
-export default { create, update }
+const checkUniqueField = async (field, excludeId) => {
+  const invalidField = await getUserModel().findOne({
+    _id: { $ne: ObjectId(excludeId) },
+    ...field,
+  })
+  console.log(invalidField)
+  return invalidField ? false : true
+}
+
+export default { create, update, checkUniqueField }

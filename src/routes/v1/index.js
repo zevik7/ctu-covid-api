@@ -8,7 +8,7 @@ import SitesRouter from './sites.js'
 import UserRouter from './user.js'
 import DeclarationRouter from './declaration.js'
 import LocationRouter from './location.js'
-import VaccinationRouter from './vaccination.js'
+import InjectionRouter from './injection.js'
 import VaccineTypeRouter from './vaccine_type.js'
 import AuthRouter from './auth.js'
 
@@ -27,7 +27,7 @@ router.use('/heath_declaration', authMiddleware, DeclarationRouter)
 
 router.use('/location', authMiddleware, LocationRouter)
 
-router.use('/vaccination', authMiddleware, VaccinationRouter)
+router.use('/injection', authMiddleware, InjectionRouter)
 
 router.use('/vaccine_type', authMiddleware, VaccineTypeRouter)
 
