@@ -23,11 +23,11 @@ export default async (qty) => {
     const injection_date = faker.date.between('11-1-2021', '5-1-2022')
     const images = [
       {
-        url: '/images/vaccination_proof.jpg',
+        url: '/images/injection_proof.jpg',
         desc: 'none',
       },
       {
-        url: '/images/vaccination_proof.jpg',
+        url: '/images/injection_proof.jpg',
         desc: 'none',
       },
     ]
@@ -54,6 +54,6 @@ export default async (qty) => {
   await getInjection()
     .insertMany(injections)
     .then((rs) => {
-      console.log('Vaccination - seeding successful')
+      console.log('Injection - seeding successful')
     })
 }

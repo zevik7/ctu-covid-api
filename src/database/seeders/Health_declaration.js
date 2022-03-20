@@ -36,7 +36,7 @@ export default async (qty) => {
         position: location.position,
       },
       status: {
-        danger_area: Math.random() < 0.2 ? true : false,
+        f1: Math.random() < 0.2 ? true : false,
         symptom: Math.random() < 0.2 ? true : false,
       },
       created_at,
