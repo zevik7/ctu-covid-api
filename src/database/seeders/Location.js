@@ -36,7 +36,7 @@ export default async () => {
     locations.push({
       name: locationsExample[i].name,
       created_by: {
-        _id: admin._id.toHexString(),
+        _id: admin._id,
         name: admin.name,
         email: admin.email,
       },

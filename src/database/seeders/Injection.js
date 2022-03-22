@@ -31,16 +31,16 @@ export default async (qty) => {
         desc: 'none',
       },
     ]
-    console.log()
+
     injections.push({
       user: {
-        _id: user._id.toHexString(),
+        _id: user._id,
         name: user.name,
         phone: user.phone,
         email: user.email,
       },
       vaccine_type: {
-        _id: vaccine_type._id.toHexString(),
+        _id: vaccine_type._id,
         name: vaccine_type.name,
       },
       injection_date,

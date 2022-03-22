@@ -39,7 +39,7 @@ class InjectionController {
     try {
       const data = await getInjection()
         .findOne({
-          _id: ObjectId(req.params.id),
+          _id: ObjectId(req.params._id),
         })
         .then((rs) => rs)
       return res.success({
@@ -55,13 +55,13 @@ class InjectionController {
     try {
       const injection = {
         user: {
-          _id: req.body.user_id,
+          _id: ObjectId(req.body.user_id),
           name: req.body.user_name,
           phone: req.body.user_phone,
           email: req.body.user_email,
         },
         vaccine_type: {
-          _id: req.body.vaccine_type_id,
+          _id: ObjectId(req.body.vaccine_type_id),
           name: req.body.vaccine_type_name,
         },
         injection_date: req.body.injection_date,
@@ -82,8 +82,8 @@ class InjectionController {
       const data = await getInjection()
         .insertOne({
           ...injection,
-          created_at: Date.now,
-          updated_at: Date.now,
+          created_at: Date.now(),
+          updated_at: Date.now(),
         })
         .then((rs) => rs)
 
@@ -98,14 +98,14 @@ class InjectionController {
   //[PUT] /injection
   async update(req, res, next) {
     try {
-      const vaccineTypeName = await getVaccineType().findOne({
-        _id: ObjectId(req.query.vaccine_type_id),
-      }).name
+      const vaccineType = await getVaccineType().findOne({
+        _id: ObjectId(req.body.vaccine_type_id),
+      })
 
       let injection = {
         vaccine_type: {
-          _id: ObjectId(req.query.vaccine_type_id),
-          name: vaccineTypeName,
+          _id: ObjectId(req.body.vaccine_type_id),
+          name: vaccineType.name,
         },
         injection_date: req.body.injection_date,
       }

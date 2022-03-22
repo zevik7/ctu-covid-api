@@ -1,4 +1,6 @@
 import getHealthDeclarationModel from '#models/Health_declaration.js'
+import getLocation from '#models/Location.js'
+import getUser from '#models/User.js'
 import { ObjectId } from 'mongodb'
 
 class HealthDeclarationController {
@@ -20,6 +22,12 @@ class HealthDeclarationController {
           const { start, end } = JSON.parse(filter.created_at_between)
           filter.created_at = { $gte: new Date(start), $lte: new Date(end) }
           delete filter.created_at_between
+        }
+        if (filter.hasOwnProperty('location._id')) {
+          filter['location._id'] = ObjectId(filter['location._id'])
+        }
+        if (filter.hasOwnProperty('user._id')) {
+          filter['user._id'] = ObjectId(filter['user._id'])
         }
       }
 
@@ -53,18 +61,51 @@ class HealthDeclarationController {
         data,
       })
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
   // [POST] /health_declaration
   async store(req, res, next) {
     try {
+      // Get location
+      const location = await getLocation().findOne(
+        {
+          _id: ObjectId(req.body.location_id),
+        },
+        {
+          projection: { _id: 1, name: 1, position: 1 },
+        }
+      )
+
+      // Get user
+      const user = await getUser().findOne(
+        {
+          $or: [
+            { phone: req.body.user_indentity },
+            { email: req.body.user_indentity },
+          ],
+        },
+        {
+          projection: { _id: 1, name: 1, phone: 1, email: 1, address: 1 },
+        }
+      )
+
+      if (!user)
+        throw {
+          errors: {
+            user_indentity: 'Không tìm thấy người dùng',
+          },
+          type: 'validation',
+        }
+
       const data = await getHealthDeclarationModel()
         .insertOne({
-          ...req.body,
-          created_at: Date.now,
-          updated_at: Date.now,
+          user: { ...user },
+          location: { ...location },
+          status: req.body.status,
+          created_at: new Date(),
+          updated_at: new Date(),
         })
         .then((rs) => rs)
 
@@ -72,7 +113,7 @@ class HealthDeclarationController {
         data: data,
       })
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 

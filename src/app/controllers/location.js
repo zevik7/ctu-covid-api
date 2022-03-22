@@ -32,14 +32,15 @@ class LocationController {
     }
   }
 
-  // [GET] /location?_id
+  // [GET] /location/:_id
   async show(req, res, next) {
     try {
       const data = await getLocationModel()
         .findOne({
-          _id: ObjectId(req.params.id),
+          _id: ObjectId(req.params._id),
         })
         .then((rs) => rs)
+
       return res.success({
         data,
       })
@@ -54,8 +55,8 @@ class LocationController {
       const data = await getLocationModel()
         .insertOne({
           ...req.body,
-          created_at: Date.now,
-          updated_at: Date.now,
+          created_at: new Date(),
+          updated_at: new Date(),
         })
         .then((rs) => rs)
 

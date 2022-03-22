@@ -24,14 +24,14 @@ export default async (qty) => {
 
     health_declarations.push({
       user: {
-        _id: user._id.toHexString(),
+        _id: user._id,
         name: user.name,
         phone: user.phone,
         email: user.email,
         address: user.address,
       },
       location: {
-        _id: location._id.toHexString(),
+        _id: location._id,
         name: location.name,
         position: location.position,
       },
