@@ -48,9 +48,9 @@ export default async () => {
   ]
 
   // Assign timestamp
-  vaccineTypes = vaccineTypes.map((element, index) => {
+  vaccineTypes = vaccineTypes.map((vaccineType, index) => {
     return {
-      ...element,
+      ...vaccineType,
       created_at: new Date(),
       updated_at: new Date(),
     }

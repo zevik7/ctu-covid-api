@@ -1,4 +1,6 @@
 import getInjection from '#models/Injection.js'
+import getVaccineType from '#models/Vaccine_type.js'
+import getUser from '#models/User.js'
 import { ObjectId } from 'mongodb'
 
 class InjectionController {
@@ -51,9 +53,35 @@ class InjectionController {
   // [POST] /injection
   async store(req, res, next) {
     try {
+      const injection = {
+        user: {
+          _id: req.body.user_id,
+          name: req.body.user_name,
+          phone: req.body.user_phone,
+          email: req.body.user_email,
+        },
+        vaccine_type: {
+          _id: req.body.vaccine_type_id,
+          name: req.body.vaccine_type_name,
+        },
+        injection_date: req.body.injection_date,
+      }
+
+      if (req.files && req.files.images)
+        injection.images = req.files.images.map((image, index) => ({
+          url: '/injection/' + image.filename,
+        }))
+
+      // Count time
+      let currentTime = await getInjection().countDocuments({
+        'user._id': req.body.user_id,
+      })
+
+      injection.time = currentTime + 1
+
       const data = await getInjection()
         .insertOne({
-          ...req.body,
+          ...injection,
           created_at: Date.now,
           updated_at: Date.now,
         })
@@ -70,13 +98,30 @@ class InjectionController {
   //[PUT] /injection
   async update(req, res, next) {
     try {
+      const vaccineTypeName = await getVaccineType().findOne({
+        _id: ObjectId(req.query.vaccine_type_id),
+      }).name
+
+      let injection = {
+        vaccine_type: {
+          _id: ObjectId(req.query.vaccine_type_id),
+          name: vaccineTypeName,
+        },
+        injection_date: req.body.injection_date,
+      }
+
+      if (req.files && req.files.images)
+        injection.images = req.files.images.map((image, index) => ({
+          url: '/injection/' + image.filename,
+        }))
+
       const data = await getInjection()
         .updateOne(
           {
             _id: ObjectId(req.query._id),
           },
           {
-            $set: req.body,
+            $set: injection,
             $currentDate: { updated_at: true },
           }
         )

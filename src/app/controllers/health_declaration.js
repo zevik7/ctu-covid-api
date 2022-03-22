@@ -16,20 +16,12 @@ class HealthDeclarationController {
 
       // Filters
       if (filter) {
-        if (filter.hasOwnProperty('location._id'))
-          filter['location._id'] = ObjectId(filter['location._id'])
-
-        if (filter.hasOwnProperty('user._id'))
-          filter['user._id'] = ObjectId(filter['user._id'])
-
         if (filter.hasOwnProperty('created_at_between')) {
           const { start, end } = JSON.parse(filter.created_at_between)
           filter.created_at = { $gte: new Date(start), $lte: new Date(end) }
           delete filter.created_at_between
         }
       }
-
-      console.log(filter)
 
       const data = await getHealthDeclarationModel()
         .find(filter)
