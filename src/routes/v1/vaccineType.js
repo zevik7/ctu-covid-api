@@ -1,6 +1,6 @@
 import express from 'express'
 import multer from 'multer'
-import controller from '#controllers/vaccine_type.js'
+import controller from '#controllers/vaccineType.js'
 
 const router = express.Router()
 

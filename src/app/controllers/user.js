@@ -76,16 +76,12 @@ class UserController {
         user.avatar = '/user/' + req.files.avatar[0].filename
 
       // Unique email and phone
-      const checkEmail = UserRequest.checkUniqueField(
-        'email',
-        user.email,
-        req.query._id
-      )
-      const checkPhone = UserRequest.checkUniqueField(
-        'phone',
-        user.phone,
-        req.query._id
-      )
+      const checkEmail = await UserRequest.checkUniqueField({
+        email: user.email,
+      })
+      const checkPhone = await UserRequest.checkUniqueField({
+        phone: user.phone,
+      })
 
       let uniqueMessage = {}
 
@@ -124,11 +120,12 @@ class UserController {
         user.avatar = '/user/' + req.files.avatar[0].filename
 
       // Unique email and phone
-      const checkEmail = await UserRequest.checkUniqueField(
+      // Unique email and phone
+      const checkEmail = UserRequest.checkUniqueField(
         { email: user.email },
         req.query._id
       )
-      const checkPhone = await UserRequest.checkUniqueField(
+      const checkPhone = UserRequest.checkUniqueField(
         { phone: user.phone },
         req.query._id
       )

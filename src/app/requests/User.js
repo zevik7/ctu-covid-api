@@ -54,13 +54,12 @@ const update = (data) => {
   return validationResult
 }
 
-const checkUniqueField = async (field, excludeId) => {
-  const invalidField = await getUserModel().findOne({
-    _id: { $ne: ObjectId(excludeId) },
-    ...field,
-  })
-  console.log(invalidField)
-  return invalidField ? false : true
+const checkUniqueField = async (filter, excludeId) => {
+  if (excludeId) filter._id = { $ne: ObjectId(excludeId) }
+
+  const existObj = await getUserModel().findOne(filter)
+
+  return existObj ? false : true
 }
 
 export default { create, update, checkUniqueField }

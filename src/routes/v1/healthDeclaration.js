@@ -1,5 +1,5 @@
 import express from 'express'
-import controller from '#controllers/health_declaration.js'
+import controller from '#controllers/healthDeclaration.js'
 
 const router = express.Router()
 

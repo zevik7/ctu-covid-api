@@ -6,11 +6,13 @@ import authMiddleware from '#middlewares/auth.js'
 
 import SitesRouter from './sites.js'
 import UserRouter from './user.js'
-import DeclarationRouter from './declaration.js'
+import DeclarationRouter from './healthDeclaration.js'
 import LocationRouter from './location.js'
 import InjectionRouter from './injection.js'
-import VaccineTypeRouter from './vaccine_type.js'
+import VaccineTypeRouter from './vaccineType.js'
 import AuthRouter from './auth.js'
+import userProfileRouter from './userProfile.js'
+import Positive_declarationRouter from './positiveDeclaration.js'
 
 const router = express.Router()
 
@@ -20,6 +22,10 @@ router.use(handleResponse)
 router.use('/', SitesRouter)
 
 router.use('/auth', AuthRouter)
+
+router.use('/user-profile', userProfileRouter)
+
+router.use('/positive_declaration', Positive_declarationRouter)
 
 router.use('/user', authMiddleware, UserRouter)
 
