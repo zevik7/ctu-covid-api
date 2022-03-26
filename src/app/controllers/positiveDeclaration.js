@@ -4,6 +4,25 @@ import getUser from '#models/User.js'
 import { ObjectId } from 'mongodb'
 
 class PositiveDeclarationController {
+  async statistics(req, res, next) {
+    try {
+      const dateCount = req.query.dateCount || 90
+      let statDates = []
+      for (let i = 0; i < dateCount; i++) {
+        const date = new Date()
+        date.setDate(date.getDate() - i)
+
+        const value = Math.floor(Math.random() * (1000 - 960 + 1) + 960)
+        statDates.unshift([Date.parse(date), value])
+      }
+
+      return res.success({
+        statDates,
+      })
+    } catch (error) {
+      // return res.badreq(error.stack)
+    }
+  }
   // [GET] /health_declaration
   async index(req, res, next) {
     try {
@@ -35,7 +54,7 @@ class PositiveDeclarationController {
         .find(filter)
         .sort()
         .skip(skip)
-        .limit(perPage)
+        .limit(100)
         .toArray()
 
       return res.success({

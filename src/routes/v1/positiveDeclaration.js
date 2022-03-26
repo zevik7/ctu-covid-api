@@ -8,6 +8,9 @@ const upload = multer()
 
 router.use(upload.none())
 
+// Stats
+router.get('/statistics', controller.statistics)
+
 router.get('/', controller.index)
 
 router.post('/', controller.store)
