@@ -43,9 +43,9 @@ export default async (qty) => {
         _id: vaccine_type._id,
         name: vaccine_type.name,
       },
-      injection_date,
+      injection_date: faker.date.between('2022-01-01', '2022-03-01'),
       time: Math.ceil(Math.random() * 3),
-      images,
+      images: [],
       created_at: new Date(),
       updated_at: new Date(),
     })

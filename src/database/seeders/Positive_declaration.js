@@ -2,6 +2,9 @@ import faker from '@faker-js/faker'
 import getPositive_declarationModel from '#models/Positive_declaration.js'
 import getUserModel from '#models/User.js'
 import getLocationModel from '#models/Location.js'
+import Chance from 'chance'
+
+const chance = new Chance()
 
 export default async (qty) => {
   // Remove all previous data
@@ -21,6 +24,12 @@ export default async (qty) => {
     const user = faker.random.arrayElement(users)
     const location = faker.random.arrayElement(locations)
     const created_at = new Date()
+    let start_date = faker.date.between('2022-02-01', '2022-03-20')
+    let end_date = new Date(
+      new Date(start_date).setDate(
+        start_date.getDate() + faker.random.arrayElement([7, 8, 9, 10])
+      )
+    )
 
     positive_declarations.push({
       user: {
@@ -31,14 +40,15 @@ export default async (qty) => {
         address: user.address,
       },
       location: {
-        _id: location._id,
-        name: location.name,
-        position: location.position,
+        name: user.address,
+        position: {
+          lat: chance.floating({ min: 10.0308, max: 10.044 }),
+          lng: chance.floating({ min: 105.7525, max: 105.784 }),
+        },
       },
-      status: {
-        f1: Math.random() < 0.2 ? true : false,
-        symptom: Math.random() < 0.2 ? true : false,
-      },
+      severe_symptoms: Math.random() < 0.05 ? true : false,
+      start_date,
+      end_date,
       created_at,
     })
   }

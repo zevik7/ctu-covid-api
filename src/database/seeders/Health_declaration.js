@@ -20,7 +20,7 @@ export default async (qty) => {
   for (let i = 0; i < qty; i++) {
     const user = faker.random.arrayElement(users)
     const location = faker.random.arrayElement(locations)
-    const created_at = new Date()
+    const created_at = faker.date.between('2022-02-01', '2022-03-26')
 
     health_declarations.push({
       user: {
@@ -36,8 +36,8 @@ export default async (qty) => {
         position: location.position,
       },
       status: {
-        f1: Math.random() < 0.2 ? true : false,
-        symptom: Math.random() < 0.2 ? true : false,
+        f1: Math.random() < 0.1 ? true : false,
+        symptom: Math.random() < 0.1 ? true : false,
       },
       created_at,
     })
