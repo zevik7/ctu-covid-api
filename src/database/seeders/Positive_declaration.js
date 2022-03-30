@@ -1,4 +1,5 @@
 import faker from '@faker-js/faker'
+import dateFormat from 'dateformat'
 import getPositive_declarationModel from '#models/Positive_declaration.js'
 import getUserModel from '#models/User.js'
 import getLocationModel from '#models/Location.js'
@@ -22,10 +23,9 @@ export default async (qty) => {
 
   for (let i = 0; i < qty; i++) {
     const user = faker.random.arrayElement(users)
-    const location = faker.random.arrayElement(locations)
     const created_at = new Date()
-    let start_date = faker.date.between('2022-02-01', '2022-03-20')
-    let end_date = new Date(
+    const start_date = faker.date.between('2022-01-01', dateFormat(created_at))
+    const end_date = new Date(
       new Date(start_date).setDate(
         start_date.getDate() + faker.random.arrayElement([7, 8, 9, 10])
       )

@@ -1,26 +1,94 @@
+import dateFormat from 'dateformat'
 import getPositiveDeclarationModel from '#models/Positive_declaration.js'
 import getLocation from '#models/Location.js'
 import getUser from '#models/User.js'
 import { ObjectId } from 'mongodb'
 
 class PositiveDeclarationController {
-  async statistics(req, res, next) {
+  async statByDates(req, res, next) {
     try {
-      const dateCount = req.query.dateCount || 90
-      let statDates = []
+      const dateCount = req.query.dateCount || 7
+      let stat = {
+        dates: [],
+        positive_case: [],
+        serious_case: [],
+      }
+
       for (let i = 0; i < dateCount; i++) {
         const date = new Date()
         date.setDate(date.getDate() - i)
+        stat.dates.unshift(dateFormat(date, 'yyyy-mm-dd'))
+      }
 
-        const value = Math.floor(Math.random() * (1000 - 960 + 1) + 960)
-        statDates.unshift([Date.parse(date), value])
+      const positiveCase = await getPositiveDeclarationModel()
+        .aggregate([
+          {
+            $group: {
+              _id: {
+                $dateToString: { format: '%Y-%m-%d', date: '$start_date' },
+              },
+              total: { $sum: 1 },
+            },
+          },
+          {
+            $match: {
+              _id: { $in: stat.dates },
+            },
+          },
+          {
+            $sort: {
+              _id: 1,
+            },
+          },
+          { $limit: dateCount },
+        ])
+        .toArray()
+
+      const seriousCase = await getPositiveDeclarationModel()
+        .aggregate([
+          {
+            $match: {
+              severe_symptoms: true,
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: { format: '%Y-%m-%d', date: '$start_date' },
+              },
+              total: { $sum: 1 },
+            },
+          },
+          {
+            $match: {
+              _id: { $in: stat.dates },
+            },
+          },
+          {
+            $sort: {
+              _id: 1,
+            },
+          },
+          { $limit: dateCount },
+        ])
+        .toArray()
+
+      for (let i = 0; i < stat.dates.length; i++) {
+        const date = stat.dates[i]
+
+        stat.positive_case.push(
+          positiveCase.find((pos) => pos._id === date)?.total || 0
+        )
+        stat.serious_case.push(
+          seriousCase.find((ser) => ser._id === date)?.total || 0
+        )
       }
 
       return res.success({
-        statDates,
+        ...stat,
       })
     } catch (error) {
-      // return res.badreq(error.stack)
+      return res.badreq(error.stack)
     }
   }
   // [GET] /health_declaration

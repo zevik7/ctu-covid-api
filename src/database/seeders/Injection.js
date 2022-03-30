@@ -1,4 +1,5 @@
 import faker from '@faker-js/faker'
+import dateFormat from 'dateformat'
 import getInjection from '#models/Injection.js'
 import getVaccineTypeModel from '#models/Vaccine_type.js'
 import getUserModel from '#models/User.js'
@@ -20,7 +21,12 @@ export default async (qty) => {
   for (let i = 0; i < qty; i++) {
     const user = faker.random.arrayElement(users)
     const vaccine_type = faker.random.arrayElement(vaccineTypes)
-    const injection_date = faker.date.between('11-1-2021', '5-1-2022')
+    const created_at = new Date()
+    const updated_at = new Date()
+    const injection_date = faker.date.between(
+      '2022-01-01',
+      dateFormat(created_at)
+    )
     const images = [
       {
         url: '/images/injection_proof.jpg',
@@ -31,6 +37,10 @@ export default async (qty) => {
         desc: 'none',
       },
     ]
+    // Caculate time
+    const time = injections.reduce((pre, cur, i) => {
+      if (cur.user._id === user._id) return pre + 1
+    }, 1)
 
     injections.push({
       user: {
@@ -43,11 +53,11 @@ export default async (qty) => {
         _id: vaccine_type._id,
         name: vaccine_type.name,
       },
-      injection_date: faker.date.between('2022-01-01', '2022-03-01'),
-      time: Math.ceil(Math.random() * 3),
-      images: [],
-      created_at: new Date(),
-      updated_at: new Date(),
+      injection_date,
+      time,
+      images,
+      created_at,
+      updated_at,
     })
   }
 

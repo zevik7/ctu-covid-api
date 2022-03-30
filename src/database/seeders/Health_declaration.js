@@ -1,4 +1,5 @@
 import faker from '@faker-js/faker'
+import dateFormat from 'dateformat'
 import getHealth_declarationModel from '#models/Health_declaration.js'
 import getUserModel from '#models/User.js'
 import getLocationModel from '#models/Location.js'
@@ -20,7 +21,7 @@ export default async (qty) => {
   for (let i = 0; i < qty; i++) {
     const user = faker.random.arrayElement(users)
     const location = faker.random.arrayElement(locations)
-    const created_at = faker.date.between('2022-02-01', '2022-03-26')
+    const created_at = faker.date.between('2022-01-01', dateFormat(new Date()))
 
     health_declarations.push({
       user: {

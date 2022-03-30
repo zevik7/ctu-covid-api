@@ -9,7 +9,7 @@ const upload = multer()
 router.use(upload.none())
 
 // Stats
-router.get('/statistics', controller.statistics)
+router.get('/statByDates', controller.statByDates)
 
 router.get('/', controller.index)
 
