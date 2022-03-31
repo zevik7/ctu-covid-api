@@ -9,7 +9,8 @@ const app = express()
 
 const port = process.env.APP_PORT || 8080
 
-const host = process.env.APP_HOST || 'localhost'
+const host = '0.0.0.0'
+// process.env.APP_HOST || 'localhost'
 
 // Use cors
 const corsOptions = {
