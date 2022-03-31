@@ -15,7 +15,8 @@
     "#utilities/*": "./src/utilities/*"
   },
   "scripts": {
-    "start": "nodemon -r dotenv/config src/index.js",
+    "start": "node -r dotenv/config src/index.js",
+    "start:dev": "nodemon -r dotenv/config src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "eslint": "eslint src --cache --fix",
     "prepare": "husky install",

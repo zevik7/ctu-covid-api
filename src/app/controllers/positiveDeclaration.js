@@ -91,7 +91,7 @@ class PositiveDeclarationController {
       return res.badreq(error.stack)
     }
   }
-  // [GET] /health_declaration
+  // [GET] /positive_declaration
   async index(req, res, next) {
     try {
       let { currentPage, perPage, ...filter } = req.query
@@ -136,7 +136,7 @@ class PositiveDeclarationController {
     }
   }
 
-  // [GET] /health_declaration?_id
+  // [GET] /positive_declaration?_id
   async show(req, res, next) {
     try {
       const data = await getPositiveDeclarationModel()
@@ -152,59 +152,54 @@ class PositiveDeclarationController {
     }
   }
 
-  // [POST] /health_declaration
+  // [POST] /positive_declaration
   async store(req, res, next) {
     try {
-      // Get location
-      const location = await getLocation().findOne(
-        {
-          _id: ObjectId(req.body.location_id),
-        },
-        {
-          projection: { _id: 1, name: 1, position: 1 },
-        }
-      )
-
       // Get user
-      const user = await getUser().findOne(
-        {
-          $or: [
-            { phone: req.body.user_indentity },
-            { email: req.body.user_indentity },
-          ],
-        },
-        {
-          projection: { _id: 1, name: 1, phone: 1, email: 1, address: 1 },
-        }
-      )
+      // const user = await getUser().findOne(
+      //   {
+      //     $or: [
+      //       { phone: req.body.user_indentity },
+      //       { email: req.body.user_indentity },
+      //     ],
+      //   },
+      //   {
+      //     projection: { _id: 1, name: 1, phone: 1, email: 1, address: 1 },
+      //   }
+      // )
 
-      if (!user)
-        throw {
-          errors: {
-            user_indentity: 'Không tìm thấy người dùng',
-          },
-          type: 'validation',
-        }
+      // if (!user)
+      //   throw {
+      //     errors: {
+      //       user_indentity: 'Không tìm thấy người dùng',
+      //     },
+      //     type: 'validation',
+      //   }
 
-      const data = await getPositiveDeclarationModel()
-        .insertOne({
-          user: { ...user },
-          location: { ...location },
-          status: req.body.status,
-          created_at: new Date(),
-          updated_at: new Date(),
-        })
-        .then((rs) => rs)
+      console.log(req.body)
+
+      const data = {}
+
+      // const data = await getPositiveDeclarationModel()
+      //   .insertOne({
+      //     user: { ...user },
+      //     location: { ...location },
+      //     severe_symptoms: req.body.severe_symptoms,
+      //     start_date: req.body.start_date,
+      //     end_date: null,
+      //     created_at: new Date(),
+      //   })
+      //   .then((rs) => rs)
 
       return res.success({
         data: data,
       })
     } catch (error) {
-      return res.badreq(error.stack)
+      return res.badreq(error)
     }
   }
 
-  //[PUT] /health_declaration
+  //[PUT] /positive_declaration
   async update(req, res, next) {
     try {
       const data = await getPositiveDeclarationModel()
@@ -227,7 +222,7 @@ class PositiveDeclarationController {
     }
   }
 
-  // [DELETE] /health_declaration?ids=[]
+  // [DELETE] /positive_declaration?ids=[]
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
