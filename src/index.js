@@ -7,10 +7,9 @@ import routeV1 from './routes/v1/index.js'
 
 const app = express()
 
-const port = process.env.APP_PORT || 8080
+const port = process.env.APP_PORT || 5000
 
-const host = '0.0.0.0'
-// process.env.APP_HOST || 'localhost'
+const host = process.env.APP_HOST || '0.0.0.0'
 
 // Use cors
 const corsOptions = {
