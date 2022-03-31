@@ -7,9 +7,9 @@ import routeV1 from './routes/v1/index.js'
 
 const app = express()
 
-const port = process.env.APP_PORT || 5000
+const port = process.env.PORT || 5000
 
-const host = process.env.APP_HOST || '0.0.0.0'
+const host = process.env.HOST || '0.0.0.0'
 
 // Use cors
 const corsOptions = {
