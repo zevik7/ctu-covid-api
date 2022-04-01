@@ -19,7 +19,7 @@ export default async () => {
       birthday: '03-15-2000',
       gender: 'Nam',
       email: 'phub1805805@gmail.com',
-      phone: '0898008388',
+      phone: '0898007389',
       address: 'Hau Giang',
       username: 'admin',
       password: bcrypt.hashSync('admin'),

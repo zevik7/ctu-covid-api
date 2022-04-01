@@ -1,6 +1,5 @@
 import dateFormat from 'dateformat'
-import getPositiveDeclarationModel from '#models/Positive_declaration.js'
-import getLocation from '#models/Location.js'
+import getPositiveDeclaration from '#models/Positive_declaration.js'
 import getUser from '#models/User.js'
 import { ObjectId } from 'mongodb'
 
@@ -20,7 +19,7 @@ class PositiveDeclarationController {
         stat.dates.unshift(dateFormat(date, 'yyyy-mm-dd'))
       }
 
-      const positiveCase = await getPositiveDeclarationModel()
+      const positiveCase = await getPositiveDeclaration()
         .aggregate([
           {
             $group: {
@@ -44,7 +43,7 @@ class PositiveDeclarationController {
         ])
         .toArray()
 
-      const seriousCase = await getPositiveDeclarationModel()
+      const seriousCase = await getPositiveDeclaration()
         .aggregate([
           {
             $match: {
@@ -101,7 +100,7 @@ class PositiveDeclarationController {
 
       // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const count = await getPositiveDeclarationModel().countDocuments({})
+      const count = await getPositiveDeclaration().countDocuments({})
 
       // Filters
       if (filter) {
@@ -118,7 +117,7 @@ class PositiveDeclarationController {
         }
       }
 
-      const data = await getPositiveDeclarationModel()
+      const data = await getPositiveDeclaration()
         .find(filter)
         .sort()
         .skip(skip)
@@ -139,7 +138,7 @@ class PositiveDeclarationController {
   // [GET] /positive_declaration?_id
   async show(req, res, next) {
     try {
-      const data = await getPositiveDeclarationModel()
+      const data = await getPositiveDeclaration()
         .findOne({
           _id: ObjectId(req.params.id),
         })
@@ -155,44 +154,59 @@ class PositiveDeclarationController {
   // [POST] /positive_declaration
   async store(req, res, next) {
     try {
-      // Get user
-      // const user = await getUser().findOne(
-      //   {
-      //     $or: [
-      //       { phone: req.body.user_indentity },
-      //       { email: req.body.user_indentity },
-      //     ],
-      //   },
-      //   {
-      //     projection: { _id: 1, name: 1, phone: 1, email: 1, address: 1 },
-      //   }
-      // )
+      const reqData = req.body
+      let identity = reqData.user_identity
 
-      // if (!user)
-      //   throw {
-      //     errors: {
-      //       user_indentity: 'Không tìm thấy người dùng',
-      //     },
-      //     type: 'validation',
-      //   }
+      const user = await getUser().findOne(
+        {
+          $or: [{ phone: identity }, { email: identity }],
+        },
+        {
+          projection: { _id: 1, name: 1, phone: 1, email: 1, address: 1 },
+        }
+      )
 
-      console.log(req.body)
+      if (!user)
+        throw {
+          errors: {
+            user_identity:
+              'Không tìm thấy người dùng, \n vui lòng tạo thông tin trước',
+          },
+          type: 'validation',
+        }
 
-      const data = {}
+      // Exist positive declare without end_date
+      let checkExist = await getPositiveDeclaration().findOne({
+        'user._id': user._id,
+        end_date: null,
+      })
 
-      // const data = await getPositiveDeclarationModel()
-      //   .insertOne({
-      //     user: { ...user },
-      //     location: { ...location },
-      //     severe_symptoms: req.body.severe_symptoms,
-      //     start_date: req.body.start_date,
-      //     end_date: null,
-      //     created_at: new Date(),
-      //   })
-      //   .then((rs) => rs)
+      if (checkExist)
+        throw {
+          errors: {
+            exist_record:
+              'Đã tồn tại khai báo, nếu bạn bị mắc covid lần nữa, ' +
+              'vui lòng khai báo "Đã khỏi" cho lần trước và thực hiện lại',
+          },
+          type: 'validation',
+        }
+
+      let positiveDecla = {
+        user: { ...user },
+        location: { ...reqData.location },
+        severe_symptoms: reqData.severe_symptoms,
+        start_date: reqData.start_date,
+        end_date: null,
+        created_at: new Date(),
+      }
+
+      if (!positiveDecla.location.name)
+        positiveDecla.location.name = user.address
+
+      const data = await getPositiveDeclaration().insertOne(positiveDecla)
 
       return res.success({
-        data: data,
+        data,
       })
     } catch (error) {
       return res.badreq(error)
@@ -202,13 +216,69 @@ class PositiveDeclarationController {
   //[PUT] /positive_declaration
   async update(req, res, next) {
     try {
-      const data = await getPositiveDeclarationModel()
+      const reqData = req.body
+      let identity = reqData.user_identity
+
+      const user = await getUser().findOne(
+        {
+          $or: [{ phone: identity }, { email: identity }],
+        },
+        {
+          projection: { _id: 1, name: 1, phone: 1, email: 1, address: 1 },
+        }
+      )
+
+      if (!user)
+        throw {
+          errors: {
+            user_identity: 'Không tìm thấy người dùng',
+          },
+          type: 'validation',
+        }
+
+      let checkExist = await getPositiveDeclaration().findOne(
+        {
+          'user._id': user._id,
+          end_date: null,
+        },
+        {
+          projection: { _id: 1 },
+        }
+      )
+
+      if (!checkExist)
+        throw {
+          errors: {
+            exist_record: 'Bạn chưa khao báo thông tin ca nhiễm',
+          },
+          type: 'validation',
+        }
+
+      // Throw an error if end_date < start_date
+      let dateErr = await getPositiveDeclaration().findOne({
+        'user._id': user._id,
+        start_date: { $gt: reqData.end_date },
+        end_date: null,
+      })
+
+      if (dateErr)
+        throw {
+          errors: {
+            end_date:
+              'Ngày khỏi bệnh không thể bé hơn hoặc trùng ngày bắt đầu mắc bệnh',
+          },
+          type: 'validation',
+        }
+
+      const data = await getPositiveDeclaration()
         .updateOne(
           {
-            _id: ObjectId(req.query._id),
+            _id: checkExist._id,
           },
           {
-            $set: req.body,
+            $set: {
+              end_date: reqData.end_date,
+            },
             $currentDate: { updated_at: true },
           }
         )
@@ -226,7 +296,7 @@ class PositiveDeclarationController {
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
-      const data = await getPositiveDeclarationModel().deleteMany({
+      const data = await getPositiveDeclaration().deleteMany({
         _id: { $in: ids },
       })
 
