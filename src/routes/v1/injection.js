@@ -18,6 +18,8 @@ const upload = multer({ storage: storage })
 // Get upload images file
 router.use(upload.fields([{ name: 'images', maxCount: 2 }]))
 
+router.get('/general_stat', controller.generalStat)
+
 router.get('/', controller.index)
 
 router.post('/', authMiddleware, controller.store)

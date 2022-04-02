@@ -41,7 +41,6 @@ export default async (count) => {
     const gender = faker.random.arrayElement(['Nam', 'Nữ'])
     const email = firstName.split(' ').at(-1) + '@student.ctu.edu.vn'
     const phone = new RandExp(phoneRegex).gen()
-    console.log(phone)
     const address = faker.address.city()
     const avatar = '/images/default_avatar.jpeg'
     users.push({

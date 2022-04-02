@@ -38,8 +38,9 @@ export default async (qty) => {
       },
     ]
     // Caculate time
-    const time = injections.reduce((pre, cur, i) => {
+    const time = injections.reduce((pre, cur) => {
       if (cur.user._id === user._id) return pre + 1
+      else return pre
     }, 1)
 
     injections.push({

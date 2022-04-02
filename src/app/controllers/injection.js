@@ -4,32 +4,18 @@ import getUser from '#models/User.js'
 import { ObjectId } from 'mongodb'
 
 class InjectionController {
-  async statByTime(req, res, next) {
+  async generalStat(req, res, next) {
     try {
-      let { currentPage, perPage, ...filter } = req.query
-      // Convert to number
-      currentPage = +currentPage || 1
-      perPage = +perPage || 0
-
-      // Calculation pagination
-      const skip = (currentPage - 1) * perPage
-      const count = await getInjection().countDocuments({})
-
-      if (filter.hasOwnProperty('user._id')) {
-        filter['user._id'] = ObjectId(filter['user._id'])
-      }
-
-      const data = await getInjection()
-        .find(filter)
-        .skip(skip)
-        .limit(perPage)
-        .toArray()
+      const firstTime = await getInjection().countDocuments({ time: 1 })
+      const secondTime = await getInjection().countDocuments({ time: 2 })
+      const thirdTime = await getInjection().countDocuments({ time: 3 })
 
       return res.success({
-        currentPage,
-        perPage,
-        count,
-        data,
+        total: firstTime,
+        by_time: {
+          labels: ['Mũi 1', 'Mũi 2', 'Mũi 3'],
+          time: [firstTime, secondTime, thirdTime],
+        },
       })
     } catch (error) {
       return req.badreq(error)

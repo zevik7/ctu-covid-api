@@ -4,19 +4,33 @@ import getUser from '#models/User.js'
 import { ObjectId } from 'mongodb'
 
 class PositiveDeclarationController {
-  async statByDates(req, res, next) {
+  async generalStat(req, res, next) {
     try {
       const dateCount = req.query.dateCount || 7
+
+      const total = await getPositiveDeclaration().countDocuments({})
+      const total_recovered = await getPositiveDeclaration().countDocuments({
+        end_date: { $ne: null },
+      })
+      const total_serious_case = await getPositiveDeclaration().countDocuments({
+        severe_symptoms: true,
+      })
+
       let stat = {
-        dates: [],
-        positive_case: [],
-        serious_case: [],
+        total,
+        total_recovered,
+        total_serious_case,
+        by_date: {
+          dates: [],
+          positive_case: [],
+          serious_case: [],
+        },
       }
 
       for (let i = 0; i < dateCount; i++) {
         const date = new Date()
         date.setDate(date.getDate() - i)
-        stat.dates.unshift(dateFormat(date, 'yyyy-mm-dd'))
+        stat.by_date.dates.unshift(dateFormat(date, 'yyyy-mm-dd'))
       }
 
       const positiveCase = await getPositiveDeclaration()
@@ -31,7 +45,7 @@ class PositiveDeclarationController {
           },
           {
             $match: {
-              _id: { $in: stat.dates },
+              _id: { $in: stat.by_date.dates },
             },
           },
           {
@@ -60,7 +74,7 @@ class PositiveDeclarationController {
           },
           {
             $match: {
-              _id: { $in: stat.dates },
+              _id: { $in: stat.by_date.dates },
             },
           },
           {
@@ -72,13 +86,13 @@ class PositiveDeclarationController {
         ])
         .toArray()
 
-      for (let i = 0; i < stat.dates.length; i++) {
-        const date = stat.dates[i]
+      for (let i = 0; i < stat.by_date.dates.length; i++) {
+        const date = stat.by_date.dates[i]
 
-        stat.positive_case.push(
+        stat.by_date.positive_case.push(
           positiveCase.find((pos) => pos._id === date)?.total || 0
         )
-        stat.serious_case.push(
+        stat.by_date.serious_case.push(
           seriousCase.find((ser) => ser._id === date)?.total || 0
         )
       }
