@@ -90,7 +90,7 @@ class PositiveDeclarationController {
       return res.badreq(error.stack)
     }
   }
-  // [GET] /positive_declaration
+  // [GET] /positive_declarations
   async index(req, res, next) {
     try {
       let { currentPage, perPage, ...filter } = req.query
@@ -102,19 +102,8 @@ class PositiveDeclarationController {
       const skip = (currentPage - 1) * perPage
       const count = await getPositiveDeclaration().countDocuments({})
 
-      // Filters
-      if (filter) {
-        if (filter.hasOwnProperty('created_at_between')) {
-          const { start, end } = JSON.parse(filter.created_at_between)
-          filter.created_at = { $gte: new Date(start), $lte: new Date(end) }
-          delete filter.created_at_between
-        }
-        if (filter.hasOwnProperty('location._id')) {
-          filter['location._id'] = ObjectId(filter['location._id'])
-        }
-        if (filter.hasOwnProperty('user._id')) {
-          filter['user._id'] = ObjectId(filter['user._id'])
-        }
+      if (filter.hasOwnProperty('user._id')) {
+        filter['user._id'] = ObjectId(filter['user._id'])
       }
 
       const data = await getPositiveDeclaration()
@@ -195,7 +184,7 @@ class PositiveDeclarationController {
         user: { ...user },
         location: { ...reqData.location },
         severe_symptoms: reqData.severe_symptoms,
-        start_date: reqData.start_date,
+        start_date: new Date(reqData.start_date),
         end_date: null,
         created_at: new Date(),
       }
@@ -257,7 +246,7 @@ class PositiveDeclarationController {
       // Throw an error if end_date < start_date
       let dateErr = await getPositiveDeclaration().findOne({
         'user._id': user._id,
-        start_date: { $gt: reqData.end_date },
+        start_date: { $gt: new Date(reqData.end_date) },
         end_date: null,
       })
 
@@ -277,7 +266,7 @@ class PositiveDeclarationController {
           },
           {
             $set: {
-              end_date: reqData.end_date,
+              end_date: new Date(reqData.end_date),
             },
             $currentDate: { updated_at: true },
           }
@@ -295,7 +284,7 @@ class PositiveDeclarationController {
   // [DELETE] /positive_declaration?ids=[]
   async destroy(req, res, next) {
     try {
-      const ids = req.query.ids.map((id, index) => ObjectId(id))
+      const ids = req.query.ids.map((id) => ObjectId(id))
       const data = await getPositiveDeclaration().deleteMany({
         _id: { $in: ids },
       })

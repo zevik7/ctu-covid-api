@@ -10,17 +10,17 @@ import Positive_declarationSeeder from './Positive_declaration.js'
 connectDB().then(seedDB)
 
 async function seedDB() {
-  await userSeeder(1000)
+  await userSeeder(100)
 
   await vaccine_typeSeeder()
 
-  await injectionSeeder(2000)
+  await injectionSeeder(200)
 
-  await locationSeeder(2000)
+  await locationSeeder(200)
 
-  await health_declarationSeeder(2000)
+  await health_declarationSeeder(200)
 
-  await Positive_declarationSeeder(1000)
+  await Positive_declarationSeeder(100)
 
   console.log('Done')
 

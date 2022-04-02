@@ -16,9 +16,12 @@ class InjectionController {
       const skip = (currentPage - 1) * perPage
       const count = await getInjection().countDocuments({})
 
+      if (filter.hasOwnProperty('user._id')) {
+        filter['user._id'] = ObjectId(filter['user._id'])
+      }
+
       const data = await getInjection()
         .find(filter)
-        .sort()
         .skip(skip)
         .limit(perPage)
         .toArray()

@@ -2,8 +2,9 @@ import faker from '@faker-js/faker'
 import getUserModel from '#models/User.js'
 import removeVieTones from '#utilities/removeVieTones.js'
 import bcrypt from 'bcryptjs'
+import RandExp from 'randexp'
 
-export default async () => {
+export default async (count) => {
   faker.locale = 'vi'
 
   // Remove all previous data
@@ -30,13 +31,17 @@ export default async () => {
     },
   ]
 
-  for (let i = 0; i < 100; i++) {
+  const phoneRegex =
+    /0(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/
+
+  for (let i = 0; i < count; i++) {
     const name = faker.name.findName() // full name
     const firstName = removeVieTones(name)
     const birthday = faker.date.between('03-15-1995', '03-15-2003')
     const gender = faker.random.arrayElement(['Nam', 'Nữ'])
     const email = firstName.split(' ').at(-1) + '@student.ctu.edu.vn'
-    const phone = faker.phone.phoneNumberFormat()
+    const phone = new RandExp(phoneRegex).gen()
+    console.log(phone)
     const address = faker.address.city()
     const avatar = '/images/default_avatar.jpeg'
     users.push({
