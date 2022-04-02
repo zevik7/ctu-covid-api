@@ -1,6 +1,7 @@
 import express from 'express'
 import controller from '#controllers/user.js'
 import multer from 'multer'
+import authMiddleware from '#middlewares/auth.js'
 
 const router = express.Router()
 
@@ -17,14 +18,14 @@ const upload = multer({ storage: storage })
 // Get upload images file
 router.use(upload.fields([{ name: 'avatar', maxCount: 1 }]))
 
-router.get('/', controller.index)
+router.get('/', authMiddleware, controller.index)
 
 router.post('/', controller.store)
 
-router.get('/:_id', controller.show)
+router.get('/:_id', authMiddleware, controller.show)
 
-router.put('/', controller.update)
+router.put('/', authMiddleware, controller.update)
 
-router.delete('/', controller.destroy)
+router.delete('/', authMiddleware, controller.destroy)
 
 export default router

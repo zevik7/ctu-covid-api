@@ -1,6 +1,7 @@
 import express from 'express'
 import multer from 'multer'
 import controller from '#controllers/injection.js'
+import authMiddleware from '#middlewares/auth.js'
 
 const router = express.Router()
 
@@ -19,12 +20,12 @@ router.use(upload.fields([{ name: 'images', maxCount: 2 }]))
 
 router.get('/', controller.index)
 
-router.post('/', controller.store)
+router.post('/', authMiddleware, controller.store)
 
 router.get('/:_id', controller.show)
 
-router.put('/', controller.update)
+router.put('/', authMiddleware, controller.update)
 
-router.delete('/', controller.destroy)
+router.delete('/', authMiddleware, controller.destroy)
 
 export default router

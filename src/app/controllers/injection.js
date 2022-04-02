@@ -4,6 +4,38 @@ import getUser from '#models/User.js'
 import { ObjectId } from 'mongodb'
 
 class InjectionController {
+  async statByTime(req, res, next) {
+    try {
+      let { currentPage, perPage, ...filter } = req.query
+      // Convert to number
+      currentPage = +currentPage || 1
+      perPage = +perPage || 0
+
+      // Calculation pagination
+      const skip = (currentPage - 1) * perPage
+      const count = await getInjection().countDocuments({})
+
+      if (filter.hasOwnProperty('user._id')) {
+        filter['user._id'] = ObjectId(filter['user._id'])
+      }
+
+      const data = await getInjection()
+        .find(filter)
+        .skip(skip)
+        .limit(perPage)
+        .toArray()
+
+      return res.success({
+        currentPage,
+        perPage,
+        count,
+        data,
+      })
+    } catch (error) {
+      return req.badreq(error)
+    }
+  }
+
   // [GET] /injection
   async index(req, res, next) {
     try {
