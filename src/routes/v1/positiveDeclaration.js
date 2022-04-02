@@ -19,6 +19,6 @@ router.get('/:_id', controller.show)
 
 router.put('/', controller.update)
 
-router.delete('/', controller.destroy)
+// router.delete('/', controller.destroy)
 
 export default router

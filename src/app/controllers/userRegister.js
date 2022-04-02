@@ -2,7 +2,7 @@ import getUserModel from '#models/User.js'
 import UserRequest from '#requests/User.js'
 import { ObjectId } from 'mongodb'
 
-class UserProfile {
+class UserRegister {
   // [POST] /userPofile
   async store(req, res, next) {
     try {
@@ -49,4 +49,4 @@ class UserProfile {
   }
 }
 
-export default new UserProfile()
+export default new UserRegister()

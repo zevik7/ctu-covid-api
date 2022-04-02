@@ -1,6 +1,6 @@
 import express from 'express'
 import multer from 'multer'
-import controller from '#controllers/userProfile.js'
+import controller from '#controllers/userRegister.js'
 
 const router = express.Router()
 

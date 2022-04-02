@@ -6,13 +6,13 @@ import authMiddleware from '#middlewares/auth.js'
 
 import SitesRouter from './sites.js'
 import UserRouter from './user.js'
-import DeclarationRouter from './healthDeclaration.js'
+import HealthDeclarationRouter from './healthDeclaration.js'
 import LocationRouter from './location.js'
 import InjectionRouter from './injection.js'
 import VaccineTypeRouter from './vaccineType.js'
 import AuthRouter from './auth.js'
-import userProfileRouter from './userProfile.js'
-import Positive_declarationRouter from './positiveDeclaration.js'
+import userRegisterRouter from './userRegister.js'
+import PositiveDeclarationRouter from './positiveDeclaration.js'
 import LookupRouter from './lookup.js'
 
 const router = express.Router()
@@ -20,19 +20,21 @@ const router = express.Router()
 // Custom response
 router.use(handleResponse)
 
+// Public router
 router.use('/', SitesRouter)
 
 router.use('/auth', AuthRouter)
 
-router.use('/user_profile', userProfileRouter)
+router.use('/user_register', userRegisterRouter)
 
 router.use('/lookup', LookupRouter)
 
-router.use('/positive_declaration', Positive_declarationRouter)
+router.use('/positive_declaration', PositiveDeclarationRouter)
 
+// Auth router
 router.use('/user', authMiddleware, UserRouter)
 
-router.use('/heath_declaration', authMiddleware, DeclarationRouter)
+router.use('/heath_declaration', authMiddleware, HealthDeclarationRouter)
 
 router.use('/location', authMiddleware, LocationRouter)
 

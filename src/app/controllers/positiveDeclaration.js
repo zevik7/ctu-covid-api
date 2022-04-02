@@ -90,6 +90,7 @@ class PositiveDeclarationController {
       return res.badreq(error.stack)
     }
   }
+
   // [GET] /positive_declarations
   async index(req, res, next) {
     try {
