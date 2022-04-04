@@ -189,6 +189,13 @@ class UserController {
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
+      // Delete ref: health_declarations, injections, locations, positive_declarations
+      await getHealthDecla().deleteMany({ 'user._id': { $in: ids } })
+      await getInjection().deleteMany({ 'user._id': { $in: ids } })
+      await getPosDecla().deleteMany({ 'user._id': { $in: ids } })
+      // For created_by field for location colllection
+      await getLocation().deleteMany({ 'created_by._id': { $in: ids } })
+
       const data = await getUserModel().deleteMany({ _id: { $in: ids } })
 
       return res.success({

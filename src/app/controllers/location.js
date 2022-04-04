@@ -110,6 +110,9 @@ class LocationController {
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
+
+      await getHealthDecla().deleteMany({ 'location._id': { $in: ids } })
+
       const data = await getLocationModel().deleteMany({ _id: { $in: ids } })
 
       return res.success({

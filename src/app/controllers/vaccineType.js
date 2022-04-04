@@ -110,6 +110,9 @@ class VaccineTypeController {
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
+
+      await getInjection().deleteMany({ 'vaccine_type._id': { $in: ids } })
+
       const data = await getVaccineTypeModel().deleteMany({ _id: { $in: ids } })
 
       return res.success({
