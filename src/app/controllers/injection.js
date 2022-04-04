@@ -32,14 +32,30 @@ class InjectionController {
 
       // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const count = await getInjection().countDocuments({})
 
       if (filter.hasOwnProperty('user._id')) {
         filter['user._id'] = ObjectId(filter['user._id'])
       }
 
+      // Create regex for search
+      if (filter.searchText && filter.searchText.trim()) {
+        let regex = new RegExp(filter.searchText, 'i')
+        filter.$or = [
+          { 'user.name': regex },
+          { 'user.phone': regex },
+          { 'user.email': regex },
+          { 'user.address': regex },
+          { 'vaccine_type.name': regex },
+          { injection_date: regex },
+        ]
+      }
+      delete filter.searchText
+
+      const count = await getInjection().countDocuments(filter)
+
       const data = await getInjection()
         .find(filter)
+        .sort()
         .skip(skip)
         .limit(perPage)
         .toArray()
@@ -51,7 +67,7 @@ class InjectionController {
         data,
       })
     } catch (error) {
-      return req.badreq(error)
+      return req.badreq(error.stack)
     }
   }
 

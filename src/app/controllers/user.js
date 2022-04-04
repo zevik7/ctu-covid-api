@@ -9,26 +9,21 @@ class UserController {
       let { currentPage, perPage, ...filter } = req.query
       // Convert to number
       currentPage = +currentPage || 1
-      perPage = +perPage || 0
+      perPage = +perPage || 0 // Zero for no limit
 
       // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const count = await getUserModel().countDocuments({ role: 'user' })
 
       // Create regex for search
-      if (filter) {
-        if (filter.hasOwnProperty('search') && filter.search) {
-          filter = {
-            $or: [
-              { name: new RegExp(filter.search, 'i') },
-              { phone: new RegExp(filter.search, 'i') },
-              { email: new RegExp(filter.search, 'i') },
-            ],
-          }
-        } else {
-          filter = {}
-        }
+      if (filter.searchText && filter.searchText.trim()) {
+        filter.$or = [
+          { name: new RegExp(filter.searchText, 'i') },
+          { phone: new RegExp(filter.searchText, 'i') },
+          { email: new RegExp(filter.searchText, 'i') },
+          { address: new RegExp(filter.searchText, 'i') },
+        ]
       }
+      delete filter.searchText
 
       filter.role = 'user'
 
@@ -39,6 +34,8 @@ class UserController {
         .limit(perPage)
         .toArray()
 
+      const count = await getUserModel().countDocuments(filter)
+
       return res.success({
         currentPage,
         perPage,
@@ -46,7 +43,7 @@ class UserController {
         data,
       })
     } catch (error) {
-      return req.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 

@@ -14,22 +14,33 @@ class HealthDeclarationController {
 
       // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const count = await getHealthDeclarationModel().countDocuments({})
 
       // Filters
-      if (filter) {
-        if (filter.hasOwnProperty('created_at_between')) {
-          const { start, end } = JSON.parse(filter.created_at_between)
-          filter.created_at = { $gte: new Date(start), $lte: new Date(end) }
-          delete filter.created_at_between
-        }
-        if (filter.hasOwnProperty('location._id')) {
-          filter['location._id'] = ObjectId(filter['location._id'])
-        }
-        if (filter.hasOwnProperty('user._id')) {
-          filter['user._id'] = ObjectId(filter['user._id'])
-        }
+      if (filter['created_at_between']) {
+        const { start, end } = JSON.parse(filter.created_at_between)
+        filter.created_at = { $gte: new Date(start), $lte: new Date(end) }
+        delete filter.created_at_between
       }
+      if (filter['location._id']) {
+        filter['location._id'] = ObjectId(filter['location._id'])
+      }
+      if (filter['user._id']) {
+        filter['user._id'] = ObjectId(filter['user._id'])
+      }
+
+      // Create regex for search
+      if (filter.searchText && filter.searchText.trim()) {
+        filter.$or = [
+          { 'user.name': new RegExp(filter.searchText, 'i') },
+          { 'user.phone': new RegExp(filter.searchText, 'i') },
+          { 'user.email': new RegExp(filter.searchText, 'i') },
+          { 'user.address': new RegExp(filter.searchText, 'i') },
+          { 'location.name': new RegExp(filter.searchText, 'i') },
+        ]
+      }
+      delete filter.searchText
+
+      const count = await getHealthDeclarationModel().countDocuments(filter)
 
       const data = await getHealthDeclarationModel()
         .find(filter)
@@ -45,7 +56,7 @@ class HealthDeclarationController {
         data,
       })
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 

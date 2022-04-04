@@ -115,18 +115,29 @@ class PositiveDeclarationController {
 
       // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const count = await getPositiveDeclaration().countDocuments({})
 
-      if (filter.hasOwnProperty('user._id')) {
+      if (filter['user._id']) {
         filter['user._id'] = ObjectId(filter['user._id'])
       }
+
+      if (filter.searchText && filter.searchText.trim()) {
+        filter.$or = [
+          { 'user.name': new RegExp(filter.searchText, 'i') },
+          { 'user.phone': new RegExp(filter.searchText, 'i') },
+          { 'user.email': new RegExp(filter.searchText, 'i') },
+          { 'user.address': new RegExp(filter.searchText, 'i') },
+        ]
+      }
+      delete filter.searchText
 
       const data = await getPositiveDeclaration()
         .find(filter)
         .sort()
         .skip(skip)
-        .limit(100)
+        .limit(perPage)
         .toArray()
+
+      const count = await getPositiveDeclaration().countDocuments(filter)
 
       return res.success({
         currentPage,
@@ -135,7 +146,7 @@ class PositiveDeclarationController {
         data,
       })
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
