@@ -1,4 +1,8 @@
 import getUserModel from '#models/User.js'
+import getHealthDecla from '#models/Health_declaration.js'
+import getInjection from '#models/Injection.js'
+import getLocation from '#models/Location.js'
+import getPosDecla from '#models/Positive_declaration.js'
 import UserRequest from '#requests/User.js'
 import { ObjectId } from 'mongodb'
 
@@ -111,20 +115,20 @@ class UserController {
   //[PUT] /user
   async update(req, res, next) {
     try {
-      let user = req.body
+      const user = req.body
+      const idParam = req.query._id
 
       if (req.files && req.files.avatar)
         user.avatar = '/user/' + req.files.avatar[0].filename
 
       // Unique email and phone
-      // Unique email and phone
       const checkEmail = UserRequest.checkUniqueField(
         { email: user.email },
-        req.query._id
+        idParam
       )
       const checkPhone = UserRequest.checkUniqueField(
         { phone: user.phone },
-        req.query._id
+        idParam
       )
 
       let uniqueMessage = {}
@@ -138,24 +142,46 @@ class UserController {
           type: 'validation',
         }
 
-      const data = await getUserModel()
-        .findOneAndUpdate(
-          {
-            _id: ObjectId(req.query._id),
-          },
-          {
-            $set: user,
-            $currentDate: { updated_at: true },
-          },
-          { returnDocument: 'after' }
-        )
-        .then((rs) => rs)
+      // Update Ref: health_declarations, injections, locations, positive_declarations
+      const updateOption = [
+        {
+          'user._id': ObjectId(idParam),
+        },
+        {
+          $set: { user: { _id: ObjectId(idParam), ...user } },
+          $currentDate: { updated_at: true },
+        },
+      ]
+      await getHealthDecla().updateMany(...updateOption)
+      await getInjection().updateMany(...updateOption)
+      await getPosDecla().updateMany(...updateOption)
+      // For created_by field for location colllection
+      await getLocation().updateMany(
+        {
+          'created_by._id': ObjectId(idParam),
+        },
+        {
+          $set: { created_by: user },
+          $currentDate: { updated_at: true },
+        }
+      )
+
+      const data = await getUserModel().findOneAndUpdate(
+        {
+          _id: ObjectId(idParam),
+        },
+        {
+          $set: { _id: ObjectId(idParam), ...user },
+          $currentDate: { updated_at: true },
+        },
+        { returnDocument: 'after' }
+      )
 
       const { avatar, name, _id } = data.value
 
       return res.success({ avatar, name, _id })
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 

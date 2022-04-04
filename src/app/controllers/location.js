@@ -1,4 +1,5 @@
 import getLocationModel from '#models/Location.js'
+import getHealthDecla from '#models/Health_declaration.js'
 import { ObjectId } from 'mongodb'
 
 class LocationController {
@@ -71,13 +72,27 @@ class LocationController {
   //[PUT] /location
   async update(req, res, next) {
     try {
+      const idParam = req.query._id
+      const location = req.body
+      // Update Ref: health_declarations
+      const updateOption = [
+        {
+          'location._id': ObjectId(idParam),
+        },
+        {
+          $set: { location: { _id: ObjectId(idParam), ...location } },
+          $currentDate: { updated_at: true },
+        },
+      ]
+      await getHealthDecla().updateMany(...updateOption)
+
       const data = await getLocationModel()
         .updateOne(
           {
-            _id: ObjectId(req.query._id),
+            _id: ObjectId(idParam),
           },
           {
-            $set: req.body,
+            $set: location,
             $currentDate: { updated_at: true },
           }
         )

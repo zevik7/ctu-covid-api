@@ -1,4 +1,5 @@
 import getVaccineTypeModel from '#models/Vaccine_type.js'
+import getInjection from '#models/Injection.js'
 import { ObjectId } from 'mongodb'
 
 class VaccineTypeController {
@@ -70,10 +71,25 @@ class VaccineTypeController {
   //[PUT] /vaccine_type
   async update(req, res, next) {
     try {
+      const idObj = ObjectId(req.query._id)
+      const vaccine_type = req.body
+
+      // Update Ref: health_declarations
+      const updateOption = [
+        {
+          'vaccine_type._id': idObj,
+        },
+        {
+          $set: { vaccine_type: { _id: idObj, ...vaccine_type } },
+          $currentDate: { updated_at: true },
+        },
+      ]
+      await getInjection().updateMany(...updateOption)
+
       const data = await getVaccineTypeModel()
         .updateOne(
           {
-            _id: ObjectId(req.query._id),
+            _id: idObj,
           },
           {
             $set: req.body,
@@ -86,7 +102,7 @@ class VaccineTypeController {
         data,
       })
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
