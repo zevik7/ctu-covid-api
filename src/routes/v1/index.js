@@ -11,6 +11,7 @@ import VaccineTypeRouter from './vaccineType.js'
 import AuthRouter from './auth.js'
 import PositiveDeclarationRouter from './positiveDeclaration.js'
 import LookupRouter from './lookup.js'
+import AdminRouter from './admin.js'
 
 const router = express.Router()
 
@@ -20,6 +21,8 @@ router.use(handleResponse)
 router.use('/', SitesRouter)
 
 router.use('/auth', AuthRouter)
+
+router.use('/admin', AdminRouter)
 
 router.use('/lookup', LookupRouter)
 

@@ -173,13 +173,10 @@ class UserController {
         {
           $set: { _id: ObjectId(idParam), ...user },
           $currentDate: { updated_at: true },
-        },
-        { returnDocument: 'after' }
+        }
       )
 
-      const { avatar, name, _id } = data.value
-
-      return res.success({ avatar, name, _id })
+      return res.success({ data })
     } catch (error) {
       return res.badreq(error.stack)
     }
