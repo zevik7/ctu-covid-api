@@ -5,6 +5,7 @@ import vaccine_typeSeeder from './Vaccine_type.js'
 import locationSeeder from './Location.js'
 import health_declarationSeeder from './Health_declaration.js'
 import Positive_declarationSeeder from './Positive_declaration.js'
+import ArticleSeeder from './Article.js'
 
 // Init app
 connectDB().then(seedDB)
@@ -21,6 +22,10 @@ async function seedDB() {
   await health_declarationSeeder(200)
 
   await Positive_declarationSeeder(100)
+
+  await Positive_declarationSeeder(100)
+
+  await ArticleSeeder(5)
 
   console.log('Done')
 

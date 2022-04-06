@@ -12,6 +12,7 @@ import AuthRouter from './auth.js'
 import PositiveDeclarationRouter from './positiveDeclaration.js'
 import LookupRouter from './lookup.js'
 import AdminRouter from './admin.js'
+import ArticleRouter from './article.js'
 
 const router = express.Router()
 
@@ -37,6 +38,8 @@ router.use('/location', LocationRouter)
 router.use('/injection', InjectionRouter)
 
 router.use('/vaccine_type', VaccineTypeRouter)
+
+router.use('/article', ArticleRouter)
 
 // Custom handle error
 
