@@ -24,6 +24,7 @@ class PositiveDeclarationController {
           dates: [],
           positive_case: [],
           serious_case: [],
+          recovered_case: [],
         },
       }
 
@@ -86,6 +87,35 @@ class PositiveDeclarationController {
         ])
         .toArray()
 
+      const recoveredCase = await getPositiveDeclaration()
+        .aggregate([
+          {
+            $match: {
+              end_date: { $ne: null },
+            },
+          },
+          {
+            $group: {
+              _id: {
+                $dateToString: { format: '%Y-%m-%d', date: '$end_date' },
+              },
+              total: { $sum: 1 },
+            },
+          },
+          {
+            $match: {
+              _id: { $in: stat.by_date.dates },
+            },
+          },
+          {
+            $sort: {
+              _id: 1,
+            },
+          },
+          { $limit: dateCount },
+        ])
+        .toArray()
+
       for (let i = 0; i < stat.by_date.dates.length; i++) {
         const date = stat.by_date.dates[i]
 
@@ -94,6 +124,9 @@ class PositiveDeclarationController {
         )
         stat.by_date.serious_case.push(
           seriousCase.find((ser) => ser._id === date)?.total || 0
+        )
+        stat.by_date.recovered_case.push(
+          recoveredCase.find((rec) => rec._id === date)?.total || 0
         )
       }
 
