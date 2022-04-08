@@ -25,11 +25,14 @@ export default async (qty) => {
     const user = faker.random.arrayElement(users)
     const created_at = new Date()
     const start_date = faker.date.between('2022-01-01', dateFormat(created_at))
-    const end_date = new Date(
-      new Date(start_date).setDate(
-        start_date.getDate() + faker.random.arrayElement([7, 8, 9, 10])
-      )
-    )
+    const end_date =
+      Math.random() < 0.3
+        ? new Date(
+            new Date(start_date).setDate(
+              start_date.getDate() + faker.random.arrayElement([7, 8, 9, 10])
+            )
+          )
+        : null
 
     positive_declarations.push({
       user: {

@@ -14,7 +14,11 @@ class InjectionController {
         total: firstTime,
         by_time: {
           labels: ['Mũi 1', 'Mũi 2', 'Mũi 3'],
-          time: [firstTime, secondTime, thirdTime],
+          time: [
+            100,
+            Math.floor((secondTime * 100) / firstTime),
+            Math.floor((thirdTime * 100) / firstTime),
+          ],
         },
       })
     } catch (error) {
