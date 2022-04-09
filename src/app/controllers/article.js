@@ -45,7 +45,7 @@ class ArticleController {
         data,
       })
     } catch (error) {
-      return req.badreq(error.stack)
+      return res.badreq(error.stack)
     }
   }
 

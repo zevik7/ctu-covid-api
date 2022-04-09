@@ -29,7 +29,7 @@ class VaccineTypeController {
         data,
       })
     } catch (error) {
-      return req.badreq(error)
+      return res.badreq(error)
     }
   }
 

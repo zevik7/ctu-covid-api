@@ -1,9 +1,69 @@
-import getHealthDeclarationModel from '#models/Health_declaration.js'
+import { ObjectId } from 'mongodb'
+import dateFormat from 'dateformat'
+import getHealthDeclaration from '#models/Health_declaration.js'
 import getLocation from '#models/Location.js'
 import getUser from '#models/User.js'
-import { ObjectId } from 'mongodb'
 
 class HealthDeclarationController {
+  async generalStat(req, res, next) {
+    try {
+      const dateCount = req.query.dateCount || 30
+
+      const total = await getHealthDeclaration().countDocuments({})
+
+      let stat = {
+        total,
+        dates: [],
+        count_by_timestamp: [],
+      }
+
+      for (let i = 0; i < dateCount; i++) {
+        const date = new Date()
+        date.setDate(date.getDate() - i)
+        stat.dates.unshift(dateFormat(date, 'yyyy-mm-dd'))
+      }
+
+      const count = await getHealthDeclaration()
+        .aggregate([
+          {
+            $group: {
+              _id: {
+                $dateToString: { format: '%Y-%m-%d', date: '$created_at' },
+              },
+              total: { $sum: 1 },
+            },
+          },
+          {
+            $match: {
+              _id: { $in: stat.dates },
+            },
+          },
+          {
+            $sort: {
+              _id: 1,
+            },
+          },
+          { $limit: dateCount },
+        ])
+        .toArray()
+
+      for (let i = 0; i < stat.dates.length; i++) {
+        const date = stat.dates[i]
+
+        stat.count_by_timestamp.push([
+          date,
+          count.find((rec) => rec._id === date)?.total || 0,
+        ])
+      }
+
+      return res.success({
+        ...stat,
+      })
+    } catch (error) {
+      return res.badreq(error.stack)
+    }
+  }
+
   // [GET] /health_declaration
   async index(req, res, next) {
     try {
@@ -40,9 +100,9 @@ class HealthDeclarationController {
       }
       delete filter.searchText
 
-      const count = await getHealthDeclarationModel().countDocuments(filter)
+      const count = await getHealthDeclaration().countDocuments(filter)
 
-      const data = await getHealthDeclarationModel()
+      const data = await getHealthDeclaration()
         .find(filter)
         .sort()
         .skip(skip)
@@ -63,7 +123,7 @@ class HealthDeclarationController {
   // [GET] /health_declaration?_id
   async show(req, res, next) {
     try {
-      const data = await getHealthDeclarationModel()
+      const data = await getHealthDeclaration()
         .findOne({
           _id: ObjectId(req.params.id),
         })
@@ -110,7 +170,7 @@ class HealthDeclarationController {
           type: 'validation',
         }
 
-      const data = await getHealthDeclarationModel()
+      const data = await getHealthDeclaration()
         .insertOne({
           user: { ...user },
           location: { ...location },
@@ -131,7 +191,7 @@ class HealthDeclarationController {
   //[PUT] /health_declaration
   async update(req, res, next) {
     try {
-      const data = await getHealthDeclarationModel()
+      const data = await getHealthDeclaration()
         .updateOne(
           {
             _id: ObjectId(req.query._id),
@@ -155,7 +215,7 @@ class HealthDeclarationController {
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
-      const data = await getHealthDeclarationModel().deleteMany({
+      const data = await getHealthDeclaration().deleteMany({
         _id: { $in: ids },
       })
 

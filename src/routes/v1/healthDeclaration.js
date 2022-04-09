@@ -4,6 +4,8 @@ import authMiddleware from '#middlewares/auth.js'
 
 const router = express.Router()
 
+router.get('/general_stat', controller.generalStat)
+
 router.get('/', controller.index)
 
 router.get('/:_id', controller.show)
