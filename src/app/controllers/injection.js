@@ -9,16 +9,14 @@ class InjectionController {
       const firstTime = await getInjection().countDocuments({ time: 1 })
       const secondTime = await getInjection().countDocuments({ time: 2 })
       const thirdTime = await getInjection().countDocuments({ time: 3 })
+      const total_user = await getUser().countDocuments({})
 
       return res.success({
         total: firstTime,
+        total_user,
         by_time: {
           labels: ['Mũi 1', 'Mũi 2', 'Mũi 3'],
-          time: [
-            100,
-            Math.floor((secondTime * 100) / firstTime),
-            Math.floor((thirdTime * 100) / firstTime),
-          ],
+          data: [firstTime, secondTime, thirdTime],
         },
       })
     } catch (error) {

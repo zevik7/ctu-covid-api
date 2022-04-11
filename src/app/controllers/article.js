@@ -22,12 +22,14 @@ class ArticleController {
       if (filter.searchText && filter.searchText.trim()) {
         let regex = new RegExp(filter.searchText, 'i')
         filter.$or = [
-          { 'user.name': regex },
-          { 'user.email': regex },
+          { 'created_by.name': regex },
+          { 'created_by.email': regex },
           { title: regex },
         ]
       }
       delete filter.searchText
+
+      console.log(filter)
 
       const count = await getArticle().countDocuments(filter)
 

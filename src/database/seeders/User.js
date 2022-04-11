@@ -32,14 +32,14 @@ export default async (count) => {
   ]
 
   const phoneRegex =
-    /0(3[2-9]|5[6|8|9]|7[0|6-9]|8[0-6|8|9]|9[0-4|6-9])[0-9]{7}$/
+    /0(3[2-9]|5[689]|7(0|[6-9])|8([0-6]|8|9)|9([0-4]|[6-9]))[0-9]{7}$/
 
   for (let i = 0; i < count; i++) {
     const name = faker.name.findName() // full name
     const firstName = removeVieTones(name)
     const birthday = faker.date.between('03-15-1995', '03-15-2003')
     const gender = faker.random.arrayElement(['Nam', 'Nữ'])
-    const email = firstName.split(' ').at(-1) + '@student.ctu.edu.vn'
+    const email = firstName.split(' ').at(-1) + i + '@student.ctu.edu.vn'
     const phone = new RandExp(phoneRegex).gen()
     const address = faker.address.city()
     const avatar = '/images/default_avatar.jpeg'

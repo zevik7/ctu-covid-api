@@ -3,13 +3,19 @@ import dateFormat from 'dateformat'
 import getHealthDeclaration from '#models/Health_declaration.js'
 import getLocation from '#models/Location.js'
 import getUser from '#models/User.js'
+import morgan from 'morgan'
 
 class HealthDeclarationController {
   async generalStat(req, res, next) {
     try {
-      const dateCount = req.query.dateCount || 30
+      let { dateCount, location } = req.query
+      let filter = {}
+      // From 30 days ago
+      dateCount = dateCount || 30
 
-      const total = await getHealthDeclaration().countDocuments({})
+      if (location) filter['location._id'] = ObjectId(location)
+
+      const total = await getHealthDeclaration().countDocuments(filter)
 
       let stat = {
         total,
@@ -25,6 +31,7 @@ class HealthDeclarationController {
 
       const count = await getHealthDeclaration()
         .aggregate([
+          { $match: filter },
           {
             $group: {
               _id: {

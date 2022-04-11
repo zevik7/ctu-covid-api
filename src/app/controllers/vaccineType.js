@@ -15,8 +15,18 @@ class VaccineTypeController {
       const skip = (currentPage - 1) * perPage
       const count = await getVaccineTypeModel().countDocuments({})
 
+      // Create regex for search
+      if (filter.searchText && filter.searchText.trim()) {
+        filter.$or = [
+          { title: new RegExp(filter.searchText, 'i') },
+          { 'created_by.name': new RegExp(filter.searchText, 'i') },
+          { 'created_by.email': new RegExp(filter.searchText, 'i') },
+        ]
+      }
+      delete filter.searchText
+
       const data = await getVaccineTypeModel()
-        .find()
+        .find(filter)
         .sort()
         .skip(skip)
         .limit(perPage)

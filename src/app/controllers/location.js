@@ -16,7 +16,7 @@ class LocationController {
       const count = await getLocationModel().countDocuments({})
 
       const data = await getLocationModel()
-        .find()
+        .find(filter)
         .sort()
         .skip(skip)
         .limit(perPage)
