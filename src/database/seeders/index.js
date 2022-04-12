@@ -19,9 +19,9 @@ async function seedDB() {
 
   await injectionSeeder(3000)
 
-  await health_declarationSeeder(400)
+  await health_declarationSeeder(2000)
 
-  await Positive_declarationSeeder(1000)
+  await Positive_declarationSeeder(500)
 
   await ArticleSeeder(5)
 

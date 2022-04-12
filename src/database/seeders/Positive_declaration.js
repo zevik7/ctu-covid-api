@@ -17,8 +17,6 @@ export default async (qty) => {
 
   const users = await getUserModel().find({}).toArray()
 
-  const locations = await getLocationModel().find({}).toArray()
-
   const positive_declarations = []
 
   for (let i = 0; i < qty; i++) {
