@@ -1,4 +1,4 @@
-import getVaccineTypeModel from '#models/Vaccine_type.js'
+import getVaccineType from '#models/Vaccine_type.js'
 import getInjection from '#models/Injection.js'
 import { ObjectId } from 'mongodb'
 
@@ -13,7 +13,7 @@ class VaccineTypeController {
 
       // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const count = await getVaccineTypeModel().countDocuments({})
+      const count = await getVaccineType().countDocuments({})
 
       // Create regex for search
       if (filter.searchText && filter.searchText.trim()) {
@@ -25,7 +25,7 @@ class VaccineTypeController {
       }
       delete filter.searchText
 
-      const data = await getVaccineTypeModel()
+      const data = await getVaccineType()
         .find(filter)
         .sort()
         .skip(skip)
@@ -39,40 +39,38 @@ class VaccineTypeController {
         data,
       })
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
-  // [GET] /vaccine_type?_id
+  // [GET] /vaccine_type/:_id
   async show(req, res, next) {
     try {
-      const data = await getVaccineTypeModel()
+      const result = await getVaccineType()
         .findOne({
           _id: ObjectId(req.params.id),
         })
         .then((rs) => rs)
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
   // [POST] /vaccine_type
   async store(req, res, next) {
     try {
-      const data = await getVaccineTypeModel()
+      const vaccineType = req.body
+
+      const result = await getVaccineType()
         .insertOne({
-          ...req.body,
-          created_at: Date.now,
-          updated_at: Date.now,
+          ...vaccineType,
+          created_at: new Date(),
+          updated_at: new Date(),
         })
         .then((rs) => rs)
 
-      return res.success({
-        data: data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -84,35 +82,32 @@ class VaccineTypeController {
       const idObj = ObjectId(req.query._id)
       const vaccine_type = req.body
 
-      // Update Ref: health_declarations
-      const updateOption = [
+      // Update Ref collection: health_declarations
+      await getInjection().updateMany(
         {
           'vaccine_type._id': idObj,
         },
         {
           $set: { vaccine_type: { _id: idObj, ...vaccine_type } },
           $currentDate: { updated_at: true },
-        },
-      ]
-      await getInjection().updateMany(...updateOption)
+        }
+      )
 
-      const data = await getVaccineTypeModel()
+      const result = await getVaccineType()
         .updateOne(
           {
             _id: idObj,
           },
           {
-            $set: req.body,
+            $set: vaccine_type,
             $currentDate: { updated_at: true },
           }
         )
         .then((rs) => rs)
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
-      return res.badreq(error.stack)
+      return res.badreq(error)
     }
   }
 
@@ -123,13 +118,11 @@ class VaccineTypeController {
 
       await getInjection().deleteMany({ 'vaccine_type._id': { $in: ids } })
 
-      const data = await getVaccineTypeModel().deleteMany({ _id: { $in: ids } })
+      const result = await getVaccineType().deleteMany({ _id: { $in: ids } })
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 }

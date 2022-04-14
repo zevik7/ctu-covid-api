@@ -14,9 +14,10 @@ export default async (count) => {
       console.log('Remove all previous users successful')
     })
 
+  // Data for demo
   let users = [
     {
-      name: 'Nguyen Huu Thien Phu',
+      name: 'Nguyễn Hữu Thiên Phú',
       birthday: '03-15-2000',
       gender: 'Nam',
       email: 'phub1805805@gmail.com',
@@ -26,6 +27,18 @@ export default async (count) => {
       password: bcrypt.hashSync('123123'),
       avatar: '/images/default_avatar.jpeg',
       role: 'admin',
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      name: 'Hồ Trung Nhân',
+      birthday: '30-10-2000',
+      gender: 'Nam',
+      email: 'nhan1805898@gmail.com',
+      phone: '0898008888',
+      address: 'Hau Giang',
+      avatar: '/images/default_avatar.jpeg',
+      role: 'user',
       created_at: new Date(),
       updated_at: new Date(),
     },

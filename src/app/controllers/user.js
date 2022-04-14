@@ -54,14 +54,11 @@ class UserController {
   // [GET] /user/:_id
   async show(req, res, next) {
     try {
-      const data = await getUserModel()
-        .findOne({
-          _id: ObjectId(req.params._id),
-        })
-        .then((rs) => rs)
-      return res.success({
-        data,
+      const result = await getUserModel().findOne({
+        _id: ObjectId(req.params._id),
       })
+
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }

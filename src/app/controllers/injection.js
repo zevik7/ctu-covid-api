@@ -73,7 +73,7 @@ class InjectionController {
     }
   }
 
-  // [GET] /injection?_id
+  // [GET] /injection:/_id
   async show(req, res, next) {
     try {
       const result = await getInjection()

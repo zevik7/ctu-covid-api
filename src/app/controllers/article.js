@@ -51,7 +51,7 @@ class ArticleController {
     }
   }
 
-  // [GET] /article?_id
+  // [GET] /article:/_id
   async show(req, res, next) {
     try {
       const data = await getArticle()
@@ -63,7 +63,7 @@ class ArticleController {
         data,
       })
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
@@ -73,16 +73,25 @@ class ArticleController {
       // Get user
       const { created_by_id, title, content, pinned } = req.body
 
-      const created_by = await getUser().findOne(
+      const createdUser = await getUser().findOne(
         { _id: ObjectId(created_by_id) },
         {
           projection: { _id: 1, name: 1, email: 1 },
         }
       )
 
-      const data = await getArticle()
+      if (!createdUser)
+        throw {
+          errors: {
+            created_by:
+              'Không tìm thấy người dùng, \n vui lòng tạo thông tin trước',
+          },
+          type: 'validation',
+        }
+
+      const result = await getArticle()
         .insertOne({
-          created_by,
+          created_by: createdUser,
           title,
           content,
           pinned,
@@ -91,9 +100,7 @@ class ArticleController {
         })
         .then((rs) => rs)
 
-      return res.success({
-        data: data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -104,21 +111,17 @@ class ArticleController {
     try {
       const article = req.body
 
-      const data = await getArticle()
-        .updateOne(
-          {
-            _id: ObjectId(req.query._id),
-          },
-          {
-            $set: article,
-            $currentDate: { updated_at: true },
-          }
-        )
-        .then((rs) => rs)
+      const result = await getArticle().updateOne(
+        {
+          _id: ObjectId(req.query._id),
+        },
+        {
+          $set: article,
+          $currentDate: { updated_at: true },
+        }
+      )
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -128,13 +131,13 @@ class ArticleController {
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
-      const data = await getArticle().deleteMany({ _id: { $in: ids } })
 
-      return res.success({
-        data,
-      })
+      // Update reference collection
+      const result = await getArticle().deleteMany({ _id: { $in: ids } })
+
+      return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 }

@@ -11,7 +11,7 @@ class UserController {
   // [GET] /admin/:_id
   async show(req, res, next) {
     try {
-      const data = await getUserModel().findOne(
+      const result = await getUserModel().findOne(
         {
           _id: ObjectId(req.params._id),
         },
@@ -20,9 +20,7 @@ class UserController {
         }
       )
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -85,7 +83,7 @@ class UserController {
 
       return res.success({ avatar, name, _id })
     } catch (error) {
-      return res.badreq(error.stack)
+      return res.badreq(error)
     }
   }
 

@@ -127,7 +127,7 @@ class HealthDeclarationController {
     }
   }
 
-  // [GET] /health_declaration?_id
+  // [GET] /health_declaration:/_id
   async show(req, res, next) {
     try {
       const result = await getHealthDeclaration()
