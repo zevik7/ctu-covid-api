@@ -76,14 +76,12 @@ class InjectionController {
   // [GET] /injection?_id
   async show(req, res, next) {
     try {
-      const data = await getInjection()
+      const result = await getInjection()
         .findOne({
           _id: ObjectId(req.params._id),
         })
         .then((rs) => rs)
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -92,43 +90,84 @@ class InjectionController {
   // [POST] /injection
   async store(req, res, next) {
     try {
+      const reqData = req.body
+      const { user_id, user_identity, vaccine_type_id, injection_date } =
+        reqData
+      const userFilter = {
+        $or: [
+          { _id: ObjectId(user_id) },
+          { phone: user_identity },
+          { email: user_identity },
+        ],
+      }
+      // Get ref document
+      const user = await getUser().findOne(userFilter, {
+        projection: { _id: 1, name: 1, phone: 1, email: 1, address: 1 },
+      })
+
+      if (!user)
+        throw {
+          errors: {
+            user_identity:
+              'Không tìm thấy người dùng, \n vui lòng tạo thông tin trước',
+          },
+          type: 'validation',
+        }
+
+      const vaccine_type = await getVaccineType().findOne(
+        {
+          _id: ObjectId(vaccine_type_id),
+        },
+        {
+          projection: { _id: 1, name: 1 },
+        }
+      )
+
+      if (!vaccine_type)
+        throw {
+          errors: {
+            vaccine_type:
+              'Không tìm thấy loại vắc-xin, vui lòng tạo thông tin trước',
+          },
+          type: 'validation',
+        }
+
       const injection = {
-        user: {
-          _id: ObjectId(req.body.user_id),
-          name: req.body.user_name,
-          phone: req.body.user_phone,
-          email: req.body.user_email,
-        },
-        vaccine_type: {
-          _id: ObjectId(req.body.vaccine_type_id),
-          name: req.body.vaccine_type_name,
-        },
-        injection_date: req.body.injection_date,
+        user,
+        vaccine_type,
+        injection_date: new Date(injection_date),
       }
 
-      if (req.files && req.files.images)
+      if (req?.files?.images)
         injection.images = req.files.images.map((image, index) => ({
           url: '/injection/' + image.filename,
         }))
+      else
+        injection.images = [
+          {
+            url: '/images/injection_proof.jpg',
+            desc: 'none',
+          },
+          {
+            url: '/images/injection_proof.jpg',
+            desc: 'none',
+          },
+        ]
 
       // Count time
-      let currentTime = await getInjection().countDocuments({
-        'user._id': req.body.user_id,
-      })
+      let currentTime = await getInjection().countDocuments(userFilter)
 
       injection.time = currentTime + 1
 
-      const data = await getInjection()
+      const result = await getInjection()
         .insertOne({
           ...injection,
-          created_at: Date.now(),
-          updated_at: Date.now(),
+          created_at: new Date(),
+          updated_at: new Date(),
         })
         .then((rs) => rs)
 
-      return res.success({
-        data: data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -137,38 +176,58 @@ class InjectionController {
   //[PUT] /injection
   async update(req, res, next) {
     try {
-      const vaccineType = await getVaccineType().findOne({
-        _id: ObjectId(req.body.vaccine_type_id),
-      })
+      const { vaccine_type_id, injection_date } = req.body
+
+      const vaccine_type = await getVaccineType().findOne(
+        {
+          _id: ObjectId(vaccine_type_id),
+        },
+        {
+          projection: { _id: 1, name: 1 },
+        }
+      )
+
+      if (!vaccine_type)
+        throw {
+          errors: {
+            vaccine_type:
+              'Không tìm thấy loại vắc-xin, vui lòng tạo thông tin trước',
+          },
+          type: 'validation',
+        }
 
       let injection = {
-        vaccine_type: {
-          _id: ObjectId(req.body.vaccine_type_id),
-          name: vaccineType.name,
-        },
-        injection_date: req.body.injection_date,
+        vaccine_type,
+        injection_date: new Date(injection_date),
       }
 
       if (req.files && req.files.images)
         injection.images = req.files.images.map((image, index) => ({
           url: '/injection/' + image.filename,
         }))
-
-      const data = await getInjection()
-        .updateOne(
+      else
+        injection.images = [
           {
-            _id: ObjectId(req.query._id),
+            url: '/images/injection_proof.jpg',
+            desc: 'none',
           },
           {
-            $set: injection,
-            $currentDate: { updated_at: true },
-          }
-        )
-        .then((rs) => rs)
+            url: '/images/injection_proof.jpg',
+            desc: 'none',
+          },
+        ]
 
-      return res.success({
-        data,
-      })
+      const result = await getInjection().updateOne(
+        {
+          _id: ObjectId(req.query._id),
+        },
+        {
+          $set: injection,
+          $currentDate: { updated_at: true },
+        }
+      )
+
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -178,11 +237,9 @@ class InjectionController {
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
-      const data = await getInjection().deleteMany({ _id: { $in: ids } })
+      const result = await getInjection().deleteMany({ _id: { $in: ids } })
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }

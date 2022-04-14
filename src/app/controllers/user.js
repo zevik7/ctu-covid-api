@@ -75,6 +75,7 @@ class UserController {
 
       if (req.files && req.files.avatar)
         user.avatar = '/user/' + req.files.avatar[0].filename
+      else user.avatar = '/images/default_avatar.jpeg' //Default img
 
       // Unique email and phone
       const checkEmail = await UserRequest.checkUniqueField({
@@ -97,10 +98,10 @@ class UserController {
 
       const data = await getUserModel()
         .insertOne({
-          ...req.body,
+          ...user,
           role,
-          created_at: Date.now,
-          updated_at: Date.now,
+          created_at: new Date(),
+          updated_at: new Date(),
         })
         .then((rs) => rs)
 

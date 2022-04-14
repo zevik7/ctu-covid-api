@@ -23,7 +23,7 @@ export default async (count) => {
       phone: '0898007389',
       address: 'Hau Giang',
       username: 'admin',
-      password: bcrypt.hashSync('admin'),
+      password: bcrypt.hashSync('123123'),
       avatar: '/images/default_avatar.jpeg',
       role: 'admin',
       created_at: new Date(),

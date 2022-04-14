@@ -163,7 +163,7 @@ class PositiveDeclarationController {
       }
       delete filter.searchText
 
-      const data = await getPositiveDeclaration()
+      const result = await getPositiveDeclaration()
         .find(filter)
         .sort()
         .skip(skip)
@@ -186,14 +186,12 @@ class PositiveDeclarationController {
   // [GET] /positive_declaration?_id
   async show(req, res, next) {
     try {
-      const data = await getPositiveDeclaration()
+      const result = await getPositiveDeclaration()
         .findOne({
           _id: ObjectId(req.params.id),
         })
         .then((rs) => rs)
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error.stack)
     }
@@ -202,12 +200,16 @@ class PositiveDeclarationController {
   // [POST] /positive_declaration
   async store(req, res, next) {
     try {
-      const reqData = req.body
-      let identity = reqData.user_identity
+      const { user_id, user_identity, location, severe_symptoms, start_date } =
+        req.body
 
       const user = await getUser().findOne(
         {
-          $or: [{ phone: identity }, { email: identity }],
+          $or: [
+            { _id: ObjectId(user_id) },
+            { phone: user_identity },
+            { email: user_identity },
+          ],
         },
         {
           projection: { _id: 1, name: 1, phone: 1, email: 1, address: 1 },
@@ -240,36 +242,33 @@ class PositiveDeclarationController {
         }
 
       let positiveDecla = {
-        user: { ...user },
-        location: { ...reqData.location },
-        severe_symptoms: reqData.severe_symptoms,
-        start_date: new Date(reqData.start_date),
-        end_date: null,
+        user,
+        location,
+        severe_symptoms,
+        start_date: new Date(start_date),
         created_at: new Date(),
+        end_date: null,
       }
 
       if (!positiveDecla.location.name)
         positiveDecla.location.name = user.address
 
-      const data = await getPositiveDeclaration().insertOne(positiveDecla)
+      const result = await getPositiveDeclaration().insertOne(positiveDecla)
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
   //[PUT] /positive_declaration
   async update(req, res, next) {
     try {
-      const reqData = req.body
-      let identity = reqData.user_identity
+      const { user_identity, end_date } = req.body
 
       const user = await getUser().findOne(
         {
-          $or: [{ phone: identity }, { email: identity }],
+          $or: [{ phone: user_identity }, { email: user_identity }],
         },
         {
           projection: { _id: 1, name: 1, phone: 1, email: 1, address: 1 },
@@ -305,7 +304,7 @@ class PositiveDeclarationController {
       // Throw an error if end_date < start_date
       let dateErr = await getPositiveDeclaration().findOne({
         'user._id': user._id,
-        start_date: { $gt: new Date(reqData.end_date) },
+        start_date: { $gt: new Date(end_date) },
         end_date: null,
       })
 
@@ -318,23 +317,21 @@ class PositiveDeclarationController {
           type: 'validation',
         }
 
-      const data = await getPositiveDeclaration()
+      const result = await getPositiveDeclaration()
         .updateOne(
           {
             _id: checkExist._id,
           },
           {
             $set: {
-              end_date: new Date(reqData.end_date),
+              end_date: new Date(end_date),
             },
             $currentDate: { updated_at: true },
           }
         )
         .then((rs) => rs)
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -344,13 +341,11 @@ class PositiveDeclarationController {
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id) => ObjectId(id))
-      const data = await getPositiveDeclaration().deleteMany({
+      const result = await getPositiveDeclaration().deleteMany({
         _id: { $in: ids },
       })
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
