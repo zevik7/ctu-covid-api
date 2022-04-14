@@ -1,5 +1,6 @@
-import getLocationModel from '#models/Location.js'
+import getLocation from '#models/Location.js'
 import getHealthDecla from '#models/Health_declaration.js'
+import getUser from '#models/User.js'
 import { ObjectId } from 'mongodb'
 
 class LocationController {
@@ -13,9 +14,9 @@ class LocationController {
 
       // Calculation pagination
       const skip = (currentPage - 1) * perPage
-      const count = await getLocationModel().countDocuments({})
+      const count = await getLocation().countDocuments({})
 
-      const data = await getLocationModel()
+      const data = await getLocation()
         .find(filter)
         .sort()
         .skip(skip)
@@ -36,34 +37,53 @@ class LocationController {
   // [GET] /location/:_id
   async show(req, res, next) {
     try {
-      const data = await getLocationModel()
+      const result = await getLocation()
         .findOne({
           _id: ObjectId(req.params._id),
         })
         .then((rs) => rs)
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
   // [POST] /location
   async store(req, res, next) {
     try {
-      const data = await getLocationModel()
+      const { name, created_by_id, position } = req.body
+
+      // Get created user
+      const createdUser = await getUser().findOne(
+        {
+          _id: ObjectId(created_by_id),
+        },
+        {
+          projection: { _id: 1, name: 1, email: 1 },
+        }
+      )
+
+      if (!createdUser)
+        throw {
+          errors: {
+            created_user_id:
+              'Không tìm thấy người dùng, \n vui lòng tạo thông tin trước',
+          },
+          type: 'validation',
+        }
+
+      const result = await getLocation()
         .insertOne({
-          ...req.body,
+          name,
+          created_by: createdUser,
+          position,
           created_at: new Date(),
           updated_at: new Date(),
         })
         .then((rs) => rs)
 
-      return res.success({
-        data: data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -73,34 +93,33 @@ class LocationController {
   async update(req, res, next) {
     try {
       const idParam = req.query._id
-      const location = req.body
+      const { name, position } = req.body
+
       // Update Ref: health_declarations
-      const updateOption = [
+      await getHealthDecla().updateMany(
         {
           'location._id': ObjectId(idParam),
         },
         {
-          $set: { location: { _id: ObjectId(idParam), ...location } },
+          $set: { location: { _id: ObjectId(idParam), name, position } },
           $currentDate: { updated_at: true },
+        }
+      )
+
+      const result = await getLocation().updateOne(
+        {
+          _id: ObjectId(idParam),
         },
-      ]
-      await getHealthDecla().updateMany(...updateOption)
-
-      const data = await getLocationModel()
-        .updateOne(
-          {
-            _id: ObjectId(idParam),
+        {
+          $set: {
+            name,
+            position,
           },
-          {
-            $set: location,
-            $currentDate: { updated_at: true },
-          }
-        )
-        .then((rs) => rs)
+          $currentDate: { updated_at: true },
+        }
+      )
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -111,13 +130,12 @@ class LocationController {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
 
+      // Delete reference collection
       await getHealthDecla().deleteMany({ 'location._id': { $in: ids } })
 
-      const data = await getLocationModel().deleteMany({ _id: { $in: ids } })
+      const result = await getLocation().deleteMany({ _id: { $in: ids } })
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }

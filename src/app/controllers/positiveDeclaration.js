@@ -163,7 +163,7 @@ class PositiveDeclarationController {
       }
       delete filter.searchText
 
-      const result = await getPositiveDeclaration()
+      const data = await getPositiveDeclaration()
         .find(filter)
         .sort()
         .skip(skip)
@@ -341,6 +341,8 @@ class PositiveDeclarationController {
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id) => ObjectId(id))
+
+      // Delete reference collection
       const result = await getPositiveDeclaration().deleteMany({
         _id: { $in: ids },
       })
