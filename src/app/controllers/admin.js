@@ -68,7 +68,7 @@ class UserController {
         }
       )
 
-      const data = await getUserModel().findOneAndUpdate(
+      const result = await getUserModel().findOneAndUpdate(
         {
           _id: ObjectId(idParam),
         },
@@ -76,12 +76,13 @@ class UserController {
           $set: { _id: ObjectId(idParam), ...admin },
           $currentDate: { updated_at: true },
         },
-        { returnDocument: 'after' }
+        { returnDocument: 'after' },
+        {
+          projection: { username: 0, password: 0 },
+        }
       )
 
-      const { avatar, name, _id } = data.value
-
-      return res.success({ avatar, name, _id })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }

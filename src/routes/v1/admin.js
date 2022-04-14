@@ -5,9 +5,18 @@ import authMiddleware from '#middlewares/auth.js'
 
 const router = express.Router()
 
-const upload = multer()
+// Form multipart parse
+const storage = multer.diskStorage({
+  destination: 'src/public/admin',
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now())
+  },
+})
 
-router.use(upload.none())
+const upload = multer({ storage: storage })
+
+// Get upload images file
+router.use(upload.fields([{ name: 'avatar', maxCount: 1 }]))
 
 router.get('/:_id', authMiddleware, controller.show)
 
