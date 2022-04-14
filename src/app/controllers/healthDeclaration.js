@@ -130,14 +130,12 @@ class HealthDeclarationController {
   // [GET] /health_declaration?_id
   async show(req, res, next) {
     try {
-      const data = await getHealthDeclaration()
+      const result = await getHealthDeclaration()
         .findOne({
           _id: ObjectId(req.params.id),
         })
         .then((rs) => rs)
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error.stack)
     }
@@ -146,23 +144,30 @@ class HealthDeclarationController {
   // [POST] /health_declaration
   async store(req, res, next) {
     try {
+      const { user_indentity, location_id, status } = req.body
+
       // Get location
       const location = await getLocation().findOne(
         {
-          _id: ObjectId(req.body.location_id),
+          _id: ObjectId(location_id),
         },
         {
           projection: { _id: 1, name: 1, position: 1 },
         }
       )
 
+      if (!location)
+        throw {
+          errors: {
+            location: 'Không tìm thấy địa điểm',
+          },
+          type: 'validation',
+        }
+
       // Get user
       const user = await getUser().findOne(
         {
-          $or: [
-            { phone: req.body.user_indentity },
-            { email: req.body.user_indentity },
-          ],
+          $or: [{ phone: user_indentity }, { email: user_indentity }],
         },
         {
           projection: { _id: 1, name: 1, phone: 1, email: 1, address: 1 },
@@ -177,21 +182,19 @@ class HealthDeclarationController {
           type: 'validation',
         }
 
-      const data = await getHealthDeclaration()
+      const result = await getHealthDeclaration()
         .insertOne({
-          user: { ...user },
-          location: { ...location },
-          status: req.body.status,
+          user,
+          location,
+          status,
           created_at: new Date(),
           updated_at: new Date(),
         })
         .then((rs) => rs)
 
-      return res.success({
-        data: data,
-      })
+      return res.success(result)
     } catch (error) {
-      return res.badreq(error.stack)
+      return res.badreq(error)
     }
   }
 
@@ -222,6 +225,8 @@ class HealthDeclarationController {
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
+
+      // Delete reference collections
       const data = await getHealthDeclaration().deleteMany({
         _id: { $in: ids },
       })

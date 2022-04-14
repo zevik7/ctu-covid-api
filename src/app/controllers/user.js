@@ -96,7 +96,7 @@ class UserController {
           type: 'validation',
         }
 
-      const data = await getUserModel()
+      const result = await getUserModel()
         .insertOne({
           ...user,
           role,
@@ -105,9 +105,7 @@ class UserController {
         })
         .then((rs) => rs)
 
-      return res.success({
-        data: data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -167,7 +165,7 @@ class UserController {
         }
       )
 
-      const data = await getUserModel().findOneAndUpdate(
+      const result = await getUserModel().findOneAndUpdate(
         {
           _id: ObjectId(idParam),
         },
@@ -177,7 +175,7 @@ class UserController {
         }
       )
 
-      return res.success({ data })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error.stack)
     }
@@ -187,18 +185,16 @@ class UserController {
   async destroy(req, res, next) {
     try {
       const ids = req.query.ids.map((id, index) => ObjectId(id))
-      // Delete ref: health_declarations, injections, locations, positive_declarations
+
+      // Delete reference collections
       await getHealthDecla().deleteMany({ 'user._id': { $in: ids } })
       await getInjection().deleteMany({ 'user._id': { $in: ids } })
       await getPosDecla().deleteMany({ 'user._id': { $in: ids } })
-      // For created_by field for location colllection
       await getLocation().deleteMany({ 'created_by._id': { $in: ids } })
 
-      const data = await getUserModel().deleteMany({ _id: { $in: ids } })
+      const result = await getUserModel().deleteMany({ _id: { $in: ids } })
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }

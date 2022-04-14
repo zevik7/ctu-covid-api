@@ -257,7 +257,7 @@ class PositiveDeclarationController {
 
       return res.success(result)
     } catch (error) {
-      return res.badreq(error.stack)
+      return res.badreq(error)
     }
   }
 
@@ -349,7 +349,7 @@ class PositiveDeclarationController {
 
       return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 }

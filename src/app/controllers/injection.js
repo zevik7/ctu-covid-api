@@ -20,7 +20,7 @@ class InjectionController {
         },
       })
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
@@ -83,7 +83,7 @@ class InjectionController {
         .then((rs) => rs)
       return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
@@ -241,7 +241,7 @@ class InjectionController {
 
       return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 }

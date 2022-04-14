@@ -10,28 +10,21 @@ class LookupController {
     try {
       const user_identify = req.query.user_identify
 
-      // Create regex for search
-      const filter = {
-        $or: [{ phone: user_identify }, { email: user_identify }],
-        role: 'user',
-      }
+      const result = await getUserModel().findOne(
+        {
+          $or: [{ phone: user_identify }, { email: user_identify }],
+          role: 'user',
+        },
+        { projection: { _id: 1, name: 1 } }
+      )
 
-      const data = await getUserModel().findOne(filter)
-
-      if (!data)
+      if (!result)
         throw {
           errors: { user_identify: 'Không tìm thấy người dùng' },
           type: 'validation',
         }
 
-      const { name, _id } = data
-
-      return res.success({
-        data: {
-          _id,
-          name,
-        },
-      })
+      return res.success(result)
     } catch (error) {
       return res.badreq(error)
     }
@@ -39,16 +32,14 @@ class LookupController {
 
   async healthDeclaration(req, res, next) {
     try {
-      const data = await getHealthDeclarationModel()
+      const result = await getHealthDeclarationModel()
         .find({ 'user._id': ObjectId(req.query['user._id']) })
         .sort()
         .toArray()
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
@@ -61,35 +52,31 @@ class LookupController {
         if (filter.hasOwnProperty('created_at_between')) {
           const { start, end } = JSON.parse(filter.created_at_between)
           filter.created_at = { $gte: new Date(start), $lte: new Date(end) }
-          delete filter.created_at_between
         }
         if (filter.hasOwnProperty('user._id')) {
           filter['user._id'] = ObjectId(filter['user._id'])
         }
       }
+      delete filter.created_at_between
 
-      const data = await getPositiveDeclarationModel().find(filter).toArray()
+      const result = await getPositiveDeclarationModel().find(filter).toArray()
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
   async injection(req, res, next) {
     try {
-      const data = await getInjectionModel()
+      const result = await getInjectionModel()
         .find({ 'user._id': ObjectId(req.query['user._id']) })
         .sort()
         .toArray()
 
-      return res.success({
-        data,
-      })
+      return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 }

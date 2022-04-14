@@ -30,7 +30,7 @@ class LocationController {
         data,
       })
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 
@@ -137,7 +137,7 @@ class LocationController {
 
       return res.success(result)
     } catch (error) {
-      return res.badreq(error)
+      return res.badreq(error.stack)
     }
   }
 }
