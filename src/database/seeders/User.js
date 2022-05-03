@@ -18,7 +18,7 @@ export default async (count) => {
   let users = [
     {
       name: 'Nguyễn Hữu Thiên Phú',
-      birthday: '03-15-2000',
+      birthday: new Date('03-15-2000'),
       gender: 'Nam',
       email: 'phub1805805@gmail.com',
       phone: '0898007389',
@@ -32,7 +32,7 @@ export default async (count) => {
     },
     {
       name: 'Hồ Trung Nhân',
-      birthday: '30-10-2000',
+      birthday: new Date('10-30-2000'),
       gender: 'Nam',
       email: 'nhan1805898@gmail.com',
       phone: '0898008888',

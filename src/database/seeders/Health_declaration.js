@@ -21,7 +21,7 @@ export default async (qty) => {
   for (let i = 0; i < qty; i++) {
     const user = faker.random.arrayElement(users)
     const location = faker.random.arrayElement(locations)
-    const created_at = faker.date.between('2022-01-01', dateFormat(new Date()))
+    const created_at = faker.date.between('04-15-2022', dateFormat(new Date()))
 
     health_declarations.push({
       user: {

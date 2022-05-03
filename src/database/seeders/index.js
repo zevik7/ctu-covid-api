@@ -11,7 +11,7 @@ import ArticleSeeder from './Article.js'
 connectDB().then(seedDB)
 
 async function seedDB() {
-  await userSeeder(1000)
+  await userSeeder(300)
 
   await vaccine_typeSeeder()
 
