@@ -13,6 +13,7 @@ import PositiveDeclarationRouter from './positiveDeclaration.js'
 import LookupRouter from './lookup.js'
 import AdminRouter from './admin.js'
 import ArticleRouter from './article.js'
+import OtpRouter from './otp.js'
 
 const router = express.Router()
 
@@ -26,6 +27,8 @@ router.use('/auth', AuthRouter)
 router.use('/admin', AdminRouter)
 
 router.use('/lookup', LookupRouter)
+
+router.use('/otp', OtpRouter)
 
 router.use('/positive_declaration', PositiveDeclarationRouter)
 

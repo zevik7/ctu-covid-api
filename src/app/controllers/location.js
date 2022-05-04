@@ -37,11 +37,9 @@ class LocationController {
   // [GET] /location/:_id
   async show(req, res, next) {
     try {
-      const result = await getLocation()
-        .findOne({
-          _id: ObjectId(req.params._id),
-        })
-        .then((rs) => rs)
+      const result = await getLocation().findOne({
+        _id: ObjectId(req.params._id),
+      })
 
       return res.success(result)
     } catch (error) {
