@@ -37,6 +37,7 @@ export default async (qty) => {
         desc: 'none',
       },
     ]
+
     // Caculate time
     const time = injections.reduce((pre, cur) => {
       if (cur.user._id === user._id) return pre + 1

@@ -14,11 +14,11 @@ export default async () => {
 
   const locationsExample = [
     {
-      name: 'Hội Trường rùa',
+      name: 'Cổng hội Trường rùa',
       latlng: { lat: 10.02929, lng: 105.76944 },
     },
     {
-      name: 'Phòng 202 Nhà học C1',
+      name: 'Phòng 202 nhà học C1',
       latlng: { lat: 10.03058, lng: 105.76991 },
     },
     {
