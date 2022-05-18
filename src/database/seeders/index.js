@@ -21,7 +21,7 @@ async function seedDB() {
 
   await health_declarationSeeder(2807)
 
-  await positive_declarationSeeder(2807)
+  await positive_declarationSeeder(1503)
 
   await ArticleSeeder(3)
 

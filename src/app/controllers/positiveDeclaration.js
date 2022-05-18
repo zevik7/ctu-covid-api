@@ -159,8 +159,12 @@ class PositiveDeclarationController {
           { 'user.phone': new RegExp(filter.searchText, 'i') },
           { 'user.email': new RegExp(filter.searchText, 'i') },
           { 'user.address': new RegExp(filter.searchText, 'i') },
+          { start_date: new RegExp(filter.searchText, 'i') },
+          { end_date: new RegExp(filter.searchText, 'i') },
+          { created_at: new RegExp(filter.searchText, 'i') },
         ]
       }
+      console.log(filter)
       delete filter.searchText
 
       const data = await getPositiveDeclaration()

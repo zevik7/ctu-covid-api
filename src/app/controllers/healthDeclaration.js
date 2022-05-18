@@ -103,6 +103,7 @@ class HealthDeclarationController {
           { 'user.email': new RegExp(filter.searchText, 'i') },
           { 'user.address': new RegExp(filter.searchText, 'i') },
           { 'location.name': new RegExp(filter.searchText, 'i') },
+          { created_at: new RegExp(filter.searchText, 'i') },
         ]
       }
       delete filter.searchText
