@@ -9,7 +9,7 @@ const upload = multer()
 
 router.use(upload.none())
 
-router.get('/', authMiddleware, controller.index)
+router.get('/', controller.index)
 
 router.post('/', authMiddleware, controller.store)
 

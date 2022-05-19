@@ -10,7 +10,7 @@ router.get('/', controller.index)
 
 router.get('/:_id', controller.show)
 
-router.post('/', authMiddleware, controller.store)
+router.post('/', controller.store)
 
 router.put('/', authMiddleware, controller.update)
 

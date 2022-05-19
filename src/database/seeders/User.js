@@ -17,11 +17,11 @@ export default async (count) => {
   // Data for demo
   let users = [
     {
-      name: 'Nguyễn Hữu Thiên Phú',
+      name: 'Admin',
       birthday: new Date('03-15-2000'),
       gender: 'Nam',
-      email: 'phub1805805@student.ctu.edu.vn',
-      phone: '0898007389',
+      email: 'admin@ctu.covid.vn',
+      phone: '0706878787',
       address: 'Hậu Giang',
       username: 'admin',
       password: bcrypt.hashSync('123123'),

@@ -11,17 +11,17 @@ import ArticleSeeder from './Article.js'
 connectDB().then(seedDB)
 
 async function seedDB() {
-  await userSeeder(1503)
+  await userSeeder(864)
 
   await vaccine_typeSeeder()
 
   await locationSeeder()
 
-  await injectionSeeder(2807)
+  await injectionSeeder(1503)
 
-  await health_declarationSeeder(2807)
+  await health_declarationSeeder(1503)
 
-  await positive_declarationSeeder(1503)
+  await positive_declarationSeeder(349)
 
   await ArticleSeeder(3)
 
